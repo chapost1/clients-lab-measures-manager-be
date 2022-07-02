@@ -1,0 +1,12 @@
+const MEASURES_VALUES_TYPES = {
+  RATIO: 'RATIO',
+  PERCENT: 'PERECENT',
+  NUMBER: 'NUMBER',
+  RM1: 'RM1',
+  TIME_SEC: 'TIME_SEC',
+  WATT: 'WATT'
+}
+
+module.exports = {
+  MEASURES_VALUES_TYPES
+}
