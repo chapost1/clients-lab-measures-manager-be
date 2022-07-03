@@ -1,7 +1,7 @@
 const makeMeasuresCategoriesDb = require('../measure-category/measures-categories-db')
 const { validatePositiveInteger } = require('../../../models/validators')
 const setupDb = require('../../../../db/sqlite/index')
-const { makeDbConnector } = require('../index')
+const { makeDbConnector, closeDbConnections } = require('../index')
 const series = require('async/series')
 const fs = require('fs')
 
@@ -19,8 +19,13 @@ describe('measuresCategoriesDb', () => {
   const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector })
 
   beforeEach(done => {
-    if (fs.existsSync(dbPath)) {
-      fs.unlinkSync(dbPath)
+    closeDbConnections(reCreateFile)
+
+    function reCreateFile () {
+      if (fs.existsSync(dbPath)) {
+        fs.unlinkSync(dbPath)
+      }
+      setupDb({ dbPath }, callback)
     }
 
     function callback (err) {
@@ -30,8 +35,6 @@ describe('measuresCategoriesDb', () => {
       }
       done()
     }
-
-    setupDb({ dbPath }, callback)
   })
 
   it('should get measure category id after have been inserted', done => {
