@@ -1,9 +1,9 @@
 const measuresRoutes = require('express').Router()
-const { makeCallback } = require('../../express-utils/index')
+const { expressCallback } = require('../../express-utils/index')
 const { postMeasure, deleteMeasureById, getMeasureById, getMeasuresList } = require('../../controllers/measure/index')
 const makeMeasuresRouter = require('./measures')
 
-const measuresRouter = makeMeasuresRouter({ postMeasure, deleteMeasureById, getMeasureById, getMeasuresList, makeCallback })
+const measuresRouter = makeMeasuresRouter({ postMeasure, deleteMeasureById, getMeasureById, getMeasuresList, expressCallback })
 measuresRoutes.use('', measuresRouter)
 
 module.exports = measuresRoutes

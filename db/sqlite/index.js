@@ -1,5 +1,5 @@
 const { makeDbConnector } = require('../../src/data-access/sqlite/index')
-const { MEASURES_VALUES_TYPES } = require('../../src/common/enums')
+const { MEASURES_VALUES_TYPES } = require('../../src/models/measure/measures-values-types')
 const waterfall = require('async/waterfall')
 
 function setupDb ({ dbPath } = { dbPath: process.env.SQLITE_DB_PATH }, mainCallback) {
