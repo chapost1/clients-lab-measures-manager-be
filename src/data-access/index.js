@@ -1,12 +1,12 @@
 const series = require('async/series')
-const { closeDbConnections: sqliteGracefulExit } = require('./sqlite/index')
+const { closeDbConnections: closeSqliteConnections } = require('./sqlite/index')
 
-function dataAccessGracefulExit (callback = () => {}) {
+function closeDataAccessConnections (callback = () => {}) {
   series([
-    sqliteGracefulExit
+    closeSqliteConnections
   ], () => callback(null))
 }
 
 module.exports = Object.freeze({
-  dataAccessGracefulExit
+  closeDataAccessConnections
 })

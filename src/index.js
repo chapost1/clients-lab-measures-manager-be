@@ -4,7 +4,7 @@ const { expressCallback, bodyParserErrorHandler, customErrorHandler } = require(
 const notFound = require('./controllers/not-found')
 const routes = require('./routes/index')
 const terminate = require('./terminate/index')
-const { dataAccessGracefulExit } = require('./data-access/index')
+const { closeDataAccessConnections } = require('./data-access/index')
 
 const app = express()
 
@@ -35,7 +35,7 @@ process.on('uncaughtException', error => {
   terminate(server, error)
 })
 
-process.on('SIGINT', () => dataAccessGracefulExit(() => process.exit(0)))
-  .on('SIGTERM', () => dataAccessGracefulExit(() => process.exit(0)))
+process.on('SIGINT', () => closeDataAccessConnections(() => process.exit(0)))
+  .on('SIGTERM', () => closeDataAccessConnections(() => process.exit(0)))
 
 module.exports = app
