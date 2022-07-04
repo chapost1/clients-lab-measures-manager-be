@@ -1,16 +1,8 @@
 const makeMeasure = require('./index')
 const { invalidFieldError, missingRequiredFieldError, emptyFieldError } = require('../errors')
+const getMockMeasure = require('./fixture')
 
 describe('makeMeasure', () => {
-  const getMockMeasure = () => {
-    return {
-      name: 'Gripper',
-      categoryId: 1,
-      valueTypeId: 1,
-      id: null
-    }
-  }
-
   describe('param edge cases', () => {
     it('should not throw if object is valid', () => {
       expect(() => makeMeasure(getMockMeasure())).not.toThrow()

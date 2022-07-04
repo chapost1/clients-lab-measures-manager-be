@@ -4,18 +4,13 @@ const setupDb = require('../../../../db/sqlite/index')
 const { makeDbConnector, closeDbConnections } = require('../index')
 const series = require('async/series')
 const fs = require('fs')
+const getMockMeasureCategory = require('../../../models/measure-category/fixture')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
 const dbConnector = makeDbConnector({ dbPath })
 
 describe('measuresCategoriesDb', () => {
-  const getMockMeasureCategory = () => {
-    return {
-      name: 'Blood',
-      id: null
-    }
-  }
   const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector })
 
   beforeEach(done => {

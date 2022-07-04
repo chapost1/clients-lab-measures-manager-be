@@ -5,20 +5,13 @@ const makeMeasuresDb = require('./measures-db')
 const { makeDbConnector, closeDbConnections } = require('../index')
 const series = require('async/series')
 const fs = require('fs')
+const getMockMeasure = require('../../../models/measure/fixture')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
 const dbConnector = makeDbConnector({ dbPath })
 
 describe('measuresDb', () => {
-  const getMockMeasure = () => {
-    return {
-      name: 'Gripper',
-      categoryId: 1,
-      valueTypeId: 1,
-      id: null
-    }
-  }
   const measuresDb = makeMeasuresDb({ dbConnector })
   const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector })
 

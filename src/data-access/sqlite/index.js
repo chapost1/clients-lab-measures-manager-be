@@ -51,7 +51,6 @@ const makeDbConnector = ({ dbPath }) => {
   }
 
   function execute (sql, params, callback) {
-    console.log('execute')
     connectDb(function (err, db) {
       if (err) {
         return callback(err)
