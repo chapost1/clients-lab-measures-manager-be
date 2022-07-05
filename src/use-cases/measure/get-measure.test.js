@@ -1,7 +1,10 @@
 const setupDb = require('../../../db/sqlite/index')
 const makeMeasuresDb = require('../../data-access/sqlite/measure/measures-db')
+const makeMeasuresValuesTypesDb = require('../../data-access/sqlite/measure-value-type/measures-values-types-db')
 const makeMeasuresCategoriesDb = require('../../data-access/sqlite/measure-category/measures-categories-db')
 const makeGetMeasure = require('./get-measure')
+const makeAddMeasure = require('./add-measure')
+const makeAddMeasureCategory = require('../measure-category/add-measure-category')
 const { validatePositiveInteger } = require('../../models/validators')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
 const fs = require('fs')
@@ -16,8 +19,11 @@ const dbConnector = makeDbConnector({ dbPath })
 describe('getMeasure', () => {
   const measuresDb = makeMeasuresDb({ dbConnector })
   const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector })
+  const measuresValuesTypesDb = makeMeasuresValuesTypesDb({ dbConnector })
 
   const getMeasure = makeGetMeasure({ measuresDb, validatePositiveInteger, parseDbMeasure })
+  const addMeasure = makeAddMeasure({ measuresDb, measuresCategoriesDb, measuresValuesTypesDb })
+  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb })
 
   beforeEach(done => {
     closeDbConnections(reCreateFile)
@@ -62,7 +68,7 @@ describe('getMeasure', () => {
     })
   })
 
-  it('should get same mesaure if all is good', done => {
+  it('should get error if not found', done => {
     // no measures at start
     getMeasure(1, err => {
       try {
@@ -82,7 +88,7 @@ describe('getMeasure', () => {
     const categoryName = 'test_category_name'
     let insertedMeasureId = null
     // let's insert some categoryId so we can use it
-    measuresCategoriesDb.insert({ name: categoryName }, postMeasureCategoryInsert)
+    addMeasureCategory({ name: categoryName }, postMeasureCategoryInsert)
 
     function postMeasureCategoryInsert (err, addedMeasureCategoryId) {
       if (err) {
@@ -91,7 +97,7 @@ describe('getMeasure', () => {
 
       mockMeasure.categoryId = addedMeasureCategoryId
 
-      measuresDb.insert(mockMeasure, postMeasureInsert)
+      addMeasure(mockMeasure, postMeasureInsert)
     }
 
     function postMeasureInsert (err, addedMeasureId) {

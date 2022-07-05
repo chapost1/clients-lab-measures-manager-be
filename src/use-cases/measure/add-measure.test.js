@@ -1,8 +1,9 @@
-const makeMeasuresCategoriesDb = require('../../data-access/sqlite/measure-category/measures-categories-db')
 const setupDb = require('../../../db/sqlite/index')
+const makeMeasuresCategoriesDb = require('../../data-access/sqlite/measure-category/measures-categories-db')
 const makeMeasuresDb = require('../../data-access/sqlite/measure/measures-db')
 const makeMeasuresValuesTypesDb = require('../../data-access/sqlite/measure-value-type/measures-values-types-db')
 const makeAddMeasure = require('./add-measure')
+const makeAddMeasureCategory = require('../measure-category/add-measure-category')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
 const fs = require('fs')
 const { MODEL_CONSTRUCTION_ERROR, INVALID_RATIONAL_VALUE_ERROR } = require('../error-types')
@@ -17,6 +18,7 @@ describe('addMeasure', () => {
   const measuresValuesTypesDb = makeMeasuresValuesTypesDb({ dbConnector })
 
   const addMeasure = makeAddMeasure({ measuresDb, measuresCategoriesDb, measuresValuesTypesDb })
+  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb })
 
   beforeEach(done => {
     closeDbConnections(reCreateFile)
@@ -93,7 +95,7 @@ describe('addMeasure', () => {
 
   it('should fail if value type id does not exists', done => {
     // let's insert some categoryId so we can use it (so we know it won't fail on invalid category id...)
-    measuresCategoriesDb.insert({ name: 'test' }, postMeasureCategoryInsert)
+    addMeasureCategory({ name: 'test' }, postMeasureCategoryInsert)
 
     function postMeasureCategoryInsert (err, addedMeasureCategoryId) {
       if (err) {
@@ -120,7 +122,7 @@ describe('addMeasure', () => {
 
   it('should succeed if all values are valid and foreign keys ids are existing ones', done => {
     // let's insert some categoryId so we can use it
-    measuresCategoriesDb.insert({ name: 'test' }, postMeasureCategoryInsert)
+    addMeasureCategory({ name: 'test' }, postMeasureCategoryInsert)
 
     function postMeasureCategoryInsert (err, addedMeasureCategoryId) {
       if (err) {

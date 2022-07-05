@@ -1,12 +1,17 @@
 const setupDb = require('../../../db/sqlite/index')
 const makeMeasuresDb = require('../../data-access/sqlite/measure/measures-db')
+const makeMeasuresValuesTypesDb = require('../../data-access/sqlite/measure-value-type/measures-values-types-db')
 const makeMeasuresCategoriesDb = require('../../data-access/sqlite/measure-category/measures-categories-db')
 const makeDeleteMeasure = require('./delete-measure')
+const makeAddMeasure = require('./add-measure')
+const makeListMeasures = require('./list-measures')
+const makeAddMeasureCategory = require('../measure-category/add-measure-category')
 const { validatePositiveInteger } = require('../../models/validators')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
 const fs = require('fs')
 const { NOT_FOUND_ERROR } = require('../error-types')
 const getMockMeasure = require('../../models/measure/fixture')
+const parseDbMeasure = require('./parse-db-measure')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
@@ -15,8 +20,12 @@ const dbConnector = makeDbConnector({ dbPath })
 describe('deleteMeasure', () => {
   const measuresDb = makeMeasuresDb({ dbConnector })
   const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector })
+  const measuresValuesTypesDb = makeMeasuresValuesTypesDb({ dbConnector })
 
   const deleteMeasure = makeDeleteMeasure({ measuresDb, validatePositiveInteger })
+  const addMeasure = makeAddMeasure({ measuresDb, measuresCategoriesDb, measuresValuesTypesDb })
+  const listMeasures = makeListMeasures({ measuresDb, parseDbMeasure })
+  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb })
 
   beforeEach(done => {
     closeDbConnections(reCreateFile)
@@ -78,7 +87,7 @@ describe('deleteMeasure', () => {
     let firstMeasureId = null
     let secondMeasureId = null
 
-    measuresCategoriesDb.insert({ name: 'category-name' }, postMeasureCategoryInsert)
+    addMeasureCategory({ name: 'category-name' }, postMeasureCategoryInsert)
 
     function postMeasureCategoryInsert (error, addedMeasureCategoryId) {
       if (error) {
@@ -92,7 +101,7 @@ describe('deleteMeasure', () => {
 
     function insertFirstMeasure () {
       mockMeasure.name = mockMeasure.name + '1'
-      measuresDb.insert(mockMeasure, (err, insertedId) => {
+      addMeasure(mockMeasure, (err, insertedId) => {
         firstMeasureId = insertedId
         postInsertMeasure(err, insertSecondMeasure)
       })
@@ -100,7 +109,7 @@ describe('deleteMeasure', () => {
 
     function insertSecondMeasure () {
       mockMeasure.name = mockMeasure.name + '2'
-      measuresDb.insert(mockMeasure, (err, insertedId) => {
+      addMeasure(mockMeasure, (err, insertedId) => {
         secondMeasureId = insertedId
         postInsertMeasure(err, deleteFirstMeasure)
       })
@@ -114,14 +123,14 @@ describe('deleteMeasure', () => {
     }
 
     function deleteFirstMeasure () {
-      measuresDb.deleteById(firstMeasureId, postDelete)
+      deleteMeasure(firstMeasureId, postDelete)
     }
 
     function postDelete (err) {
       if (err) {
         return done(err)
       }
-      measuresDb.findAll(postGetMulti)
+      listMeasures(postGetMulti)
     }
 
     function postGetMulti (error, measures) {

@@ -1,7 +1,10 @@
 const setupDb = require('../../../db/sqlite/index')
 const makeMeasuresDb = require('../../data-access/sqlite/measure/measures-db')
+const makeMeasuresValuesTypesDb = require('../../data-access/sqlite/measure-value-type/measures-values-types-db')
 const makeMeasuresCategoriesDb = require('../../data-access/sqlite/measure-category/measures-categories-db')
 const makeListMeasures = require('./list-measures')
+const makeAddMeasure = require('./add-measure')
+const makeAddMeasureCategory = require('../measure-category/add-measure-category')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
 const fs = require('fs')
 const series = require('async/series')
@@ -15,8 +18,11 @@ const dbConnector = makeDbConnector({ dbPath })
 describe('getMeasure', () => {
   const measuresDb = makeMeasuresDb({ dbConnector })
   const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector })
+  const measuresValuesTypesDb = makeMeasuresValuesTypesDb({ dbConnector })
 
   const listMeasures = makeListMeasures({ measuresDb, parseDbMeasure })
+  const addMeasure = makeAddMeasure({ measuresDb, measuresCategoriesDb, measuresValuesTypesDb })
+  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb })
 
   beforeEach(done => {
     closeDbConnections(reCreateFile)
@@ -72,7 +78,7 @@ describe('getMeasure', () => {
     const baseMeasureName = mockMeasure.name
     const measureCategoryName = 'dummyCategory'
 
-    measuresCategoriesDb.insert({ name: measureCategoryName }, postMeasureCategoryInsert)
+    addMeasureCategory({ name: measureCategoryName }, postMeasureCategoryInsert)
 
     function postMeasureCategoryInsert (error, addedMeasureCategoryId) {
       if (error) {
@@ -89,7 +95,7 @@ describe('getMeasure', () => {
       for (let i = 0; i < insertCount; i++) {
         insertTasks.push((callback) => {
           mockMeasure.name = `${baseMeasureName}_${i}`
-          measuresDb.insert(mockMeasure, callback)
+          addMeasure(mockMeasure, callback)
         })
       }
 
