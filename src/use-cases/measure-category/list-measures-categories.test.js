@@ -11,7 +11,7 @@ const dbPath = process.env.SQLITE_DB_PATH
 
 const dbConnector = makeDbConnector({ dbPath })
 
-describe('getMeasure', () => {
+describe('listMeasuresCategories', () => {
   const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector })
 
   const listMeasuresCategories = makeListMeasuresCategories({ measuresCategoriesDb })
