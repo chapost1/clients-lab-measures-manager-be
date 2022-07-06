@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "PORT=3000 SQLITE_DB_PATH=/Users/shahartal/Desktop/roy-lab/clients-lab-measures-manager-be/db/sqlite/state/dev-db.db node ./src/index.js",
-    "test": "SQLITE_DB_PATH=/Users/shahartal/Desktop/roy-lab/clients-lab-measures-manager-be/db/sqlite/state/test-db.db npx jest"
+    "test": "SQLITE_DB_PATH=/Users/shahartal/Desktop/roy-lab/clients-lab-measures-manager-be/db/sqlite/state/test-db.db npx jest --runInBand"
   },
   "author": "Shahar Tal",
   "license": "(MIT OR Apache-2.0)",
