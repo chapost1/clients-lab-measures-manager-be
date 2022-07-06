@@ -6,6 +6,4 @@ const htmlSanitizer = (text) => {
   }).trim()
 }
 
-module.exports = {
-  htmlSanitizer
-}
+module.exports = htmlSanitizer
