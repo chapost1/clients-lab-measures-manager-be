@@ -1,10 +1,9 @@
 const makeMeasuresCategoriesDb = require('../measure-category/measures-categories-db')
 const { validatePositiveInteger } = require('../../../models/validators')
-const setupDb = require('../../../../db/sqlite/index')
+const resetDatabase = require('../../../../db/sqlite/index')
 const makeMeasuresDb = require('./measures-db')
 const { makeDbConnector, closeDbConnections } = require('../index')
 const series = require('async/series')
-const fs = require('fs')
 const getMockMeasure = require('../../../models/measure/fixture')
 
 const dbPath = process.env.SQLITE_DB_PATH
@@ -16,22 +15,7 @@ describe('measuresDb', () => {
   const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector })
 
   beforeEach(done => {
-    closeDbConnections(reCreateFile)
-
-    function reCreateFile () {
-      if (fs.existsSync(dbPath)) {
-        fs.unlinkSync(dbPath)
-      }
-      setupDb({ dbPath }, callback)
-    }
-
-    function callback (err) {
-      if (err) {
-        console.log(`failed to init sqlite db using path: ${dbPath}`)
-        return process.exit()
-      }
-      done()
-    }
+    closeDbConnections(() => resetDatabase({ dbPath }, err => done(err)))
   })
 
   it('should get measure id after have been inserted', done => {

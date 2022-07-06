@@ -1,11 +1,10 @@
-const setupDb = require('../../../db/sqlite/index')
+const resetDatabase = require('../../../db/sqlite/index')
 const makeMeasuresCategoriesDb = require('../../data-access/sqlite/measure-category/measures-categories-db')
 const makeMeasuresDb = require('../../data-access/sqlite/measure/measures-db')
 const makeMeasuresValuesTypesDb = require('../../data-access/sqlite/measure-value-type/measures-values-types-db')
 const makeAddMeasure = require('./add-measure')
 const makeAddMeasureCategory = require('../measure-category/add-measure-category')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
-const fs = require('fs')
 const { MODEL_CONSTRUCTION_ERROR, INVALID_RATIONAL_VALUE_ERROR } = require('../error-types')
 
 const dbPath = process.env.SQLITE_DB_PATH
@@ -21,22 +20,7 @@ describe('addMeasure', () => {
   const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb })
 
   beforeEach(done => {
-    closeDbConnections(reCreateFile)
-
-    function reCreateFile () {
-      if (fs.existsSync(dbPath)) {
-        fs.unlinkSync(dbPath)
-      }
-      setupDb({ dbPath }, callback)
-    }
-
-    function callback (err) {
-      if (err) {
-        console.log(`failed to init sqlite db using path: ${dbPath}`)
-        return process.exit()
-      }
-      done()
-    }
+    closeDbConnections(() => resetDatabase({ dbPath }, err => done(err)))
   })
 
   it('should fail create model if no category id', done => {

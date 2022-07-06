@@ -1,11 +1,10 @@
-const setupDb = require('../../../db/sqlite/index')
+const resetDatabase = require('../../../db/sqlite/index')
 const makeMeasuresCategoriesDb = require('../../data-access/sqlite/measure-category/measures-categories-db')
 const makeDeleteMeasureCategory = require('./delete-measure-category')
 const { validatePositiveInteger } = require('../../models/validators')
 const makeAddMeasureCategory = require('./add-measure-category')
 const makeListMeasuresCategories = require('./list-measures-categories')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
-const fs = require('fs')
 const { NOT_FOUND_ERROR } = require('../error-types')
 const getMockMeasureCategory = require('../../models/measure-category/fixture')
 
@@ -21,22 +20,7 @@ describe('deleteMeasureCategory', () => {
   const listMeasuresCategories = makeListMeasuresCategories({ measuresCategoriesDb })
 
   beforeEach(done => {
-    closeDbConnections(reCreateFile)
-
-    function reCreateFile () {
-      if (fs.existsSync(dbPath)) {
-        fs.unlinkSync(dbPath)
-      }
-      setupDb({ dbPath }, callback)
-    }
-
-    function callback (err) {
-      if (err) {
-        console.log(`failed to init sqlite db using path: ${dbPath}`)
-        return process.exit()
-      }
-      done()
-    }
+    closeDbConnections(() => resetDatabase({ dbPath }, err => done(err)))
   })
 
   it('should fail if no id', done => {

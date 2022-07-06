@@ -1,11 +1,10 @@
 const makeMeasuresCategoriesDb = require('../../data-access/sqlite/measure-category/measures-categories-db')
-const setupDb = require('../../../db/sqlite/index')
+const resetDatabase = require('../../../db/sqlite/index')
 const makeAddMeasureCategory = require('./add-measure-category')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
 const { MODEL_CONSTRUCTION_ERROR } = require('../error-types')
 const getMockMeasureCategory = require('../../models/measure-category/fixture')
 const { USER_END_DB_ERROR_CONFLICT } = require('../../data-access/error-types')
-const fs = require('fs')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
@@ -17,22 +16,7 @@ describe('makeAddMeasureCategory', () => {
   const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb })
 
   beforeEach(done => {
-    closeDbConnections(reCreateFile)
-
-    function reCreateFile () {
-      if (fs.existsSync(dbPath)) {
-        fs.unlinkSync(dbPath)
-      }
-      setupDb({ dbPath }, callback)
-    }
-
-    function callback (err) {
-      if (err) {
-        console.log(`failed to init sqlite db using path: ${dbPath}`)
-        return process.exit()
-      }
-      done()
-    }
+    closeDbConnections(() => resetDatabase({ dbPath }, err => done(err)))
   })
 
   it('should fail create model if no param', done => {
