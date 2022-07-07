@@ -37,9 +37,9 @@ module.exports = function makeMakeDbConnector ({ connections }) {
 
         db.get(sql, params, function (err, row) {
           if (err) {
-            return callback(err, null)
+            return callback(err, undefined)
           }
-          return callback(null, row || null)
+          return callback(null, row || undefined)
         })
       })
     }
@@ -65,7 +65,7 @@ module.exports = function makeMakeDbConnector ({ connections }) {
       const db = new sqlite3.Database(dbPath, err => {
         if (err) {
           console.log(`Could not connect to database: ${dbPath}`, err)
-          return callback(err, null)
+          return callback(err, undefined)
         }
       })
       connections[dbPath] = db

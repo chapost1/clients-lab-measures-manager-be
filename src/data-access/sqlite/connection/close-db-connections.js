@@ -12,12 +12,12 @@ module.exports = function makeCloseDbConnections ({ connections }) {
       dbCloseConnectionEvents.push(
         callback => {
           if (db && db.open) {
-            console.log(`sqlite connection with ${dbPath} is about to disconnect through app termination`)
+            // console.log(`sqlite connection with ${dbPath} is about to disconnect through app termination`)
             db.close(err => {
               if (err) {
-                console.log(`WARNING: failed to close db connection, err: ${err.message}`)
+                // console.log(`WARNING: failed to close db connection, err: ${err.message}`)
               } else {
-                console.log('INFO: db connection has been closed')
+                // console.log('INFO: db connection has been closed')
               }
               return callback(null)// does not return error to keep clean everything (and logs are sent for dev knowledge)
             })

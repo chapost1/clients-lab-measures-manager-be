@@ -1,6 +1,6 @@
 const errorHandler = require('../error-handling')
 
-module.exports = function makeMeasuresDb ({ dbConnector }) {
+module.exports = function makeMeasuresDb ({ dbConnector, parseDbMeasure }) {
   return Object.freeze({
     insert,
     findById,
@@ -16,7 +16,17 @@ module.exports = function makeMeasuresDb ({ dbConnector }) {
      INNER JOIN measures_values_types measures_values_types ON (measures.value_type_id = measures_values_types.id)
      WHERE measures.id = ?`
 
-    dbConnector.getSingle(sql, [id], callback)
+    dbConnector.getSingle(sql, [id], (err, measure) => {
+      if (err) {
+        return callback(err)
+      }
+
+      if (measure) {
+        return callback(null, parseDbMeasure(measure))
+      }
+
+      return callback(null, undefined)
+    })
   }
 
   function findAll (callback) {
@@ -26,7 +36,12 @@ module.exports = function makeMeasuresDb ({ dbConnector }) {
      INNER JOIN measures_categories measures_categories ON (measures.category_id = measures_categories.id)
      INNER JOIN measures_values_types measures_values_types ON (measures.value_type_id = measures_values_types.id)`
 
-    dbConnector.getMulti(sql, [], callback)
+    dbConnector.getMulti(sql, [], (err, measures) => {
+      if (err) {
+        return callback(err)
+      }
+      return callback(null, measures.map(measure => parseDbMeasure(measure)))
+    })
   }
 
   function insert ({ name, categoryId, valueTypeId } = {}, callback) {

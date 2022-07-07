@@ -1,11 +1,11 @@
-module.exports = function makeListMeasures ({ measuresDb, parseDbMeasure }) {
+module.exports = function makeListMeasures ({ measuresDb }) {
   return function listMeasures (callback) {
     measuresDb.findAll(postFindAll)
 
     function postFindAll (err, measures) {
       return callback(
         err,
-        measures.map(measure => parseDbMeasure(measure))
+        measures
       )
     }
   }

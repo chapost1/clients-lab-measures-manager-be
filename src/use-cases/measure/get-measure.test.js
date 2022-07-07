@@ -9,18 +9,18 @@ const { validatePositiveInteger } = require('../../models/validators')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
 const { NOT_FOUND_ERROR } = require('../error-types')
 const getMockMeasure = require('../../models/measure/fixture')
-const parseDbMeasure = require('./parse-db-measure')
+const parseDbMeasure = require('../../data-access/sqlite/measure/parse-db-measure')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
 const dbConnector = makeDbConnector({ dbPath })
 
 describe('getMeasure', () => {
-  const measuresDb = makeMeasuresDb({ dbConnector })
+  const measuresDb = makeMeasuresDb({ dbConnector, parseDbMeasure })
   const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector })
   const measuresValuesTypesDb = makeMeasuresValuesTypesDb({ dbConnector })
 
-  const getMeasure = makeGetMeasure({ measuresDb, validatePositiveInteger, parseDbMeasure })
+  const getMeasure = makeGetMeasure({ measuresDb, validatePositiveInteger })
   const addMeasure = makeAddMeasure({ measuresDb, measuresCategoriesDb, measuresValuesTypesDb })
   const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb })
 

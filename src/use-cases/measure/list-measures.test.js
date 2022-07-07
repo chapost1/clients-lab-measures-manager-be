@@ -8,18 +8,18 @@ const makeAddMeasureCategory = require('../measure-category/add-measure-category
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
 const series = require('async/series')
 const getMockMeasure = require('../../models/measure/fixture')
-const parseDbMeasure = require('./parse-db-measure')
+const parseDbMeasure = require('../../data-access/sqlite/measure/parse-db-measure')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
 const dbConnector = makeDbConnector({ dbPath })
 
 describe('listMeasures', () => {
-  const measuresDb = makeMeasuresDb({ dbConnector })
+  const measuresDb = makeMeasuresDb({ dbConnector, parseDbMeasure })
   const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector })
   const measuresValuesTypesDb = makeMeasuresValuesTypesDb({ dbConnector })
 
-  const listMeasures = makeListMeasures({ measuresDb, parseDbMeasure })
+  const listMeasures = makeListMeasures({ measuresDb })
   const addMeasure = makeAddMeasure({ measuresDb, measuresCategoriesDb, measuresValuesTypesDb })
   const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb })
 

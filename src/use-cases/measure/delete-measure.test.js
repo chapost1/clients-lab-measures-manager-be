@@ -10,20 +10,20 @@ const { validatePositiveInteger } = require('../../models/validators')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
 const { NOT_FOUND_ERROR } = require('../error-types')
 const getMockMeasure = require('../../models/measure/fixture')
-const parseDbMeasure = require('./parse-db-measure')
+const parseDbMeasure = require('../../data-access/sqlite/measure/parse-db-measure')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
 const dbConnector = makeDbConnector({ dbPath })
 
 describe('deleteMeasure', () => {
-  const measuresDb = makeMeasuresDb({ dbConnector })
+  const measuresDb = makeMeasuresDb({ dbConnector, parseDbMeasure })
   const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector })
   const measuresValuesTypesDb = makeMeasuresValuesTypesDb({ dbConnector })
 
   const deleteMeasure = makeDeleteMeasure({ measuresDb, validatePositiveInteger })
   const addMeasure = makeAddMeasure({ measuresDb, measuresCategoriesDb, measuresValuesTypesDb })
-  const listMeasures = makeListMeasures({ measuresDb, parseDbMeasure })
+  const listMeasures = makeListMeasures({ measuresDb })
   const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb })
 
   beforeEach(done => {

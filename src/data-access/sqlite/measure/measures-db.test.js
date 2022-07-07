@@ -4,6 +4,7 @@ const resetDatabase = require('../../../../db/sqlite/index')
 const makeMeasuresDb = require('./measures-db')
 const { makeDbConnector, closeDbConnections } = require('../index')
 const series = require('async/series')
+const parseDbMeasure = require('./parse-db-measure')
 const getMockMeasure = require('../../../models/measure/fixture')
 
 const dbPath = process.env.SQLITE_DB_PATH
@@ -11,7 +12,7 @@ const dbPath = process.env.SQLITE_DB_PATH
 const dbConnector = makeDbConnector({ dbPath })
 
 describe('measuresDb', () => {
-  const measuresDb = makeMeasuresDb({ dbConnector })
+  const measuresDb = makeMeasuresDb({ dbConnector, parseDbMeasure })
   const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector })
 
   beforeEach(done => {
@@ -61,7 +62,6 @@ describe('measuresDb', () => {
     }
 
     function postGetSingle (error, foundMeasure) {
-      console.log(foundMeasure)
       if (error) {
         return done(error)
       }
@@ -69,7 +69,7 @@ describe('measuresDb', () => {
         expect(foundMeasure).not.toBeNull()
         expect(foundMeasure.id).toBe(insertedId)
         expect(foundMeasure.name).toBe(mockMeasure.name)
-        expect(foundMeasure.category_name).toBe(measureCategoryName)
+        expect(foundMeasure.categoryName).toBe(measureCategoryName)
         done()
       } catch (error) {
         done(error)

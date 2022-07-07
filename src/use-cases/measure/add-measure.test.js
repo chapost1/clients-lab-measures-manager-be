@@ -5,6 +5,7 @@ const makeMeasuresValuesTypesDb = require('../../data-access/sqlite/measure-valu
 const makeAddMeasure = require('./add-measure')
 const makeAddMeasureCategory = require('../measure-category/add-measure-category')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
+const parseDbMeasure = require('../../data-access/sqlite/measure/parse-db-measure')
 const { MODEL_CONSTRUCTION_ERROR, INVALID_RATIONAL_VALUE_ERROR } = require('../error-types')
 
 const dbPath = process.env.SQLITE_DB_PATH
@@ -12,7 +13,7 @@ const dbPath = process.env.SQLITE_DB_PATH
 const dbConnector = makeDbConnector({ dbPath })
 
 describe('addMeasure', () => {
-  const measuresDb = makeMeasuresDb({ dbConnector })
+  const measuresDb = makeMeasuresDb({ dbConnector, parseDbMeasure })
   const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector })
   const measuresValuesTypesDb = makeMeasuresValuesTypesDb({ dbConnector })
 

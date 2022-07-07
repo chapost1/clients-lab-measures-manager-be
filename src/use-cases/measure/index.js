@@ -6,12 +6,11 @@ const makeAddMeasure = require('./add-measure')
 const makeDeleteMeasure = require('./delete-measure')
 const makeGetMeasure = require('./get-measure')
 const makeListMeasures = require('./list-measures')
-const parseDbMeasure = require('./parse-db-measure')
 
 const addMeasure = makeAddMeasure({ measuresDb, measuresCategoriesDb, measuresValuesTypesDb })
 const deleteMeasure = makeDeleteMeasure({ measuresDb, validatePositiveInteger })
-const getMeasure = makeGetMeasure({ measuresDb, validatePositiveInteger, parseDbMeasure })
-const listMeasures = makeListMeasures({ measuresDb, parseDbMeasure })
+const getMeasure = makeGetMeasure({ measuresDb, validatePositiveInteger })
+const listMeasures = makeListMeasures({ measuresDb })
 
 module.exports = Object.freeze({
   addMeasure,
