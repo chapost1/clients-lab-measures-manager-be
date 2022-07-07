@@ -1,6 +1,7 @@
 const makeMeasureCategory = require('./index')
 const { invalidFieldError, missingRequiredFieldError, emptyFieldError } = require('../errors')
 const getMockMeasureCategory = require('./fixture')
+const { ValueError } = require('../../common/custom-error-types')
 
 describe('makeMeasureCategory', () => {
   describe('param edge cases', () => {
@@ -14,7 +15,7 @@ describe('makeMeasureCategory', () => {
 
     it('should return an error if empty param', () => {
       const { error } = makeMeasureCategory()
-      expect(error).toBeInstanceOf(Error)
+      expect(error).toBeInstanceOf(ValueError)
     })
 
     it('should not return error if valid param', () => {

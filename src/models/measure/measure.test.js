@@ -1,6 +1,7 @@
 const makeMeasure = require('./index')
 const { invalidFieldError, missingRequiredFieldError, emptyFieldError } = require('../errors')
 const getMockMeasure = require('./fixture')
+const { ValueError } = require('../../common/custom-error-types')
 
 describe('makeMeasure', () => {
   describe('param edge cases', () => {
@@ -14,7 +15,7 @@ describe('makeMeasure', () => {
 
     it('should return an error if empty param', () => {
       const { error } = makeMeasure()
-      expect(error).toBeInstanceOf(Error)
+      expect(error).toBeInstanceOf(ValueError)
     })
 
     it('should not return error if valid param', () => {
