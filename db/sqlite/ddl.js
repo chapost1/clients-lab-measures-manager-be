@@ -49,7 +49,7 @@ function createSchema ({ dbPath } = { }, mainCallback) {
 function enableForeignKey (db, callback) {
   console.log('enableForeignKey')
   const sql =
-    `PRAGMA foreign_keys = ON`
+    'PRAGMA foreign_keys = ON'
   db.run(sql, [], callback)
 }
 
