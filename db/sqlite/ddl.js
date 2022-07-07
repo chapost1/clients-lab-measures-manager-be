@@ -13,14 +13,22 @@ function createSchema ({ dbPath } = { }, mainCallback) {
     console.log('Setting up database...')
 
     waterfall([
+      callback => enableForeignKey(db, callback),
       callback => createMeasuresValuesTypesTable(db, callback),
       callback => createMeasuresCategoriesTable(db, callback),
       callback => createMeasuresTable(db, callback),
+      callback => createTriggerToDeleteMeasureOnItsCategoryDelete(db, callback),
+      callback => createTriggerToDeleteMeasureOnItsValueTypeDelete(db, callback),
       callback => createSexTable(db, callback),
       callback => createMeasuresNormTable(db, callback),
+      callback => createTriggerToDeleteMeasureNormOnItsMeasureDelete(db, callback),
+      callback => createTriggerToDeleteMeasureNormOnItsSexDelete(db, callback),
       callback => createClientsTable(db, callback),
       callback => createClientsKeyValuePairsTable(db, callback),
-      callback => createClientsMeasuresTable(db, callback)
+      callback => createTriggerToDeleteKeyValuePairOnItsClientDelete(db, callback),
+      callback => createClientsMeasuresTable(db, callback),
+      callback => createTriggerToDeleteClientMeasureOnItsClientDelete(db, callback),
+      callback => createTriggerToDeleteClientMeasureOnItsMeasureDelete(db, callback)
     ], err => {
       if (err) {
         console.log('Database setup has been failed...')
@@ -36,6 +44,13 @@ function createSchema ({ dbPath } = { }, mainCallback) {
   console.log(`db path: ${dbPath}`)
   const dbConnector = makeDbConnector({ dbPath })
   dbConnector.connectDb(postDbConnection)
+}
+
+function enableForeignKey (db, callback) {
+  console.log('enableForeignKey')
+  const sql =
+    `PRAGMA foreign_keys = ON`
+  db.run(sql, [], callback)
 }
 
 function createMeasuresValuesTypesTable (db, callback) {
@@ -78,6 +93,32 @@ function createMeasuresTable (db, callback) {
   db.run(sql, [], callback)
 }
 
+function createTriggerToDeleteMeasureOnItsCategoryDelete (db, callback) {
+  console.log('createTriggerToDeleteMeasureOnItsCategoryDelete')
+  const sql =
+      `CREATE trigger delete_measures_with_deleted_categories_trigger
+       BEFORE DELETE ON measures_categories
+       FOR EACH ROW
+       BEGIN
+          DELETE FROM measures
+          WHERE category_id = OLD.id;
+       END;`
+  db.run(sql, [], callback)
+}
+
+function createTriggerToDeleteMeasureOnItsValueTypeDelete (db, callback) {
+  console.log('createTriggerToDeleteMeasureOnItsValueTypeDelete')
+  const sql =
+      `CREATE trigger delete_measures_with_deleted_value_types_trigger
+       BEFORE DELETE ON measures_values_types
+       FOR EACH ROW
+       BEGIN
+          DELETE FROM measures
+          WHERE value_type_id = OLD.id;
+       END;`
+  db.run(sql, [], callback)
+}
+
 function createSexTable (db, callback) {
   console.log('createSexTable')
   const sql =
@@ -107,6 +148,32 @@ function createMeasuresNormTable (db, callback) {
             ON DELETE CASCADE 
             ON UPDATE NO ACTION
       )`
+  db.run(sql, [], callback)
+}
+
+function createTriggerToDeleteMeasureNormOnItsMeasureDelete (db, callback) {
+  console.log('createTriggerToDeleteMeasureNormOnItsMeasureDelete')
+  const sql =
+      `CREATE trigger delete_measures_norm_with_deleted_measure_trigger
+       BEFORE DELETE ON measures
+       FOR EACH ROW
+       BEGIN
+          DELETE FROM measures_norms
+          WHERE measure_id = OLD.id;
+       END;`
+  db.run(sql, [], callback)
+}
+
+function createTriggerToDeleteMeasureNormOnItsSexDelete (db, callback) {
+  console.log('createTriggerToDeleteMeasureNormOnItsSexDelete')
+  const sql =
+      `CREATE trigger delete_measures_norm_with_its_sex_deleted_trigger
+       BEFORE DELETE ON sex
+       FOR EACH ROW
+       BEGIN
+          DELETE FROM measures_norms
+          WHERE sex_id = OLD.id;
+       END;`
   db.run(sql, [], callback)
 }
 
@@ -146,6 +213,19 @@ function createClientsKeyValuePairsTable (db, callback) {
   db.run(sql, [], callback)
 }
 
+function createTriggerToDeleteKeyValuePairOnItsClientDelete (db, callback) {
+  console.log('createTriggerToDeleteKeyValuePairOnItsClientDelete')
+  const sql =
+      `CREATE trigger delete_kv_pair_with_its_client_deleted_trigger
+       BEFORE DELETE ON clients
+       FOR EACH ROW
+       BEGIN
+          DELETE FROM clients_key_value_pairs
+          WHERE client_id = OLD.id;
+       END;`
+  db.run(sql, [], callback)
+}
+
 function createClientsMeasuresTable (db, callback) {
   console.log('createClientsMeasuresTable')
   const sql =
@@ -163,6 +243,32 @@ function createClientsMeasuresTable (db, callback) {
             ON DELETE CASCADE 
             ON UPDATE NO ACTION
       )`
+  db.run(sql, [], callback)
+}
+
+function createTriggerToDeleteClientMeasureOnItsClientDelete (db, callback) {
+  console.log('createTriggerToDeleteClientMeasureOnItsClientDelete')
+  const sql =
+      `CREATE trigger delete_client_measure_with_its_client_deleted_trigger
+       BEFORE DELETE ON clients
+       FOR EACH ROW
+       BEGIN
+          DELETE FROM clients_measures
+          WHERE client_id = OLD.id;
+       END;`
+  db.run(sql, [], callback)
+}
+
+function createTriggerToDeleteClientMeasureOnItsMeasureDelete (db, callback) {
+  console.log('createTriggerToDeleteClientMeasureOnItsMeasureDelete')
+  const sql =
+      `CREATE trigger delete_client_measure_with_its_measure_deleted_trigger
+       BEFORE DELETE ON measures
+       FOR EACH ROW
+       BEGIN
+          DELETE FROM clients_measures
+          WHERE measure_id = OLD.id;
+       END;`
   db.run(sql, [], callback)
 }
 
