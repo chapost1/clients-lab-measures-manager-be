@@ -1,4 +1,4 @@
-const sqlite3 = require('sqlite3').verbose()
+const SQLite3 = require('better-sqlite3')
 
 module.exports = function makeMakeDbConnector ({ connections }) {
   return function makeDbConnector ({ dbPath }) {
@@ -22,10 +22,13 @@ module.exports = function makeMakeDbConnector ({ connections }) {
           return callback(err)
         }
 
-        db.run(sql, params, function (err) {
-        // bind this, so caller can use this.lastID and similar.
-          callback.bind(this, err)()
-        })
+        const stmt = db.prepare(sql)
+        try {
+          const info = stmt.run(...params)
+          return callback(null, info)
+        } catch (err) {
+          return callback(err)
+        }
       })
     }
 
@@ -35,12 +38,13 @@ module.exports = function makeMakeDbConnector ({ connections }) {
           return callback(err)
         }
 
-        db.get(sql, params, function (err, row) {
-          if (err) {
-            return callback(err, undefined)
-          }
+        const stmt = db.prepare(sql)
+        try {
+          const row = stmt.get(...params)
           return callback(null, row || undefined)
-        })
+        } catch (err) {
+          return callback(err)
+        }
       })
     }
 
@@ -49,12 +53,14 @@ module.exports = function makeMakeDbConnector ({ connections }) {
         if (err) {
           return callback(err)
         }
-        db.all(sql, params, function (err, rows) {
-          if (err) {
-            return callback(err, null)
-          }
+
+        const stmt = db.prepare(sql)
+        try {
+          const rows = stmt.all(...params)
           return callback(null, rows || [])
-        })
+        } catch (err) {
+          return callback(err)
+        }
       })
     }
 
@@ -62,12 +68,13 @@ module.exports = function makeMakeDbConnector ({ connections }) {
       if (connections[dbPath] && connections[dbPath].open) {
         return callback(null, connections[dbPath])
       }
-      const db = new sqlite3.Database(dbPath, err => {
-        if (err) {
-          console.log(`Could not connect to database: ${dbPath}`, err)
-          return callback(err, undefined)
-        }
-      })
+      let db = null
+      try {
+        db = new SQLite3(dbPath, { })
+      } catch (err) {
+        console.log(`Could not connect to database: ${dbPath}`, err)
+        return callback(err, undefined)
+      }
       connections[dbPath] = db
       callback(null, db)
     }

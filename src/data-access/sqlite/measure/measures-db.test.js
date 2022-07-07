@@ -3,10 +3,12 @@ const { validatePositiveInteger } = require('../../../models/validators')
 const resetDatabase = require('../../../../db/sqlite/index')
 const makeMeasuresDb = require('./measures-db')
 const { makeDbConnector, closeDbConnections } = require('../index')
-const series = require('async/series')
+const async = require('async')
 const parseDbMeasure = require('./parse-db-measure')
 const errorHandler = require('../error-handler/index')
 const getMockMeasure = require('../../../models/measure/fixture')
+const getMockMeasureCategory = require('../../../models/measure-category/fixture')
+const { DbApplicationError } = require('../../../common/custom-error-types')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
@@ -20,8 +22,33 @@ describe('measuresDb', () => {
     closeDbConnections(() => resetDatabase({ dbPath }, err => done(err)))
   })
 
+  it('should fail if measure category does not exists', done => {
+    function callback (error) {
+      try {
+        expect(error).not.toBeNull()
+        expect(error).toBeInstanceOf(DbApplicationError)
+        done()
+      } catch (error) {
+        done(error)
+      }
+    }
+    measuresDb.insert(getMockMeasure(), callback)
+  })
+
   it('should get measure id after have been inserted', done => {
-    function callback (error, addedMeasureId) {
+    const mockMeasureCategory = getMockMeasureCategory()
+
+    measuresCategoriesDb.insert(mockMeasureCategory, postMeasureCategoryInsert)
+
+    function postMeasureCategoryInsert (error) {
+      if (error) {
+        return done(error)
+      }
+
+      measuresDb.insert(getMockMeasure(), postInsertMeasure)
+    }
+
+    function postInsertMeasure (error, addedMeasureId) {
       if (error) {
         return done(error)
       }
@@ -33,7 +60,6 @@ describe('measuresDb', () => {
         done(error)
       }
     }
-    measuresDb.insert(getMockMeasure(), callback)
   })
 
   it('should be able to get measure after have been inserted', done => {
@@ -105,7 +131,7 @@ describe('measuresDb', () => {
         })
       }
 
-      series(insertTasks, error => {
+      async.series(insertTasks, error => {
         if (error) {
           return done(error)
         }
@@ -140,7 +166,7 @@ describe('measuresDb', () => {
 
       mockMeasure.categoryId = addedMeasureCategoryId
 
-      series([
+      async.series([
         callback => measuresDb.insert(mockMeasure, callback),
         callback => measuresDb.insert(mockMeasure, callback)
       ], error => {

@@ -2,7 +2,7 @@ const makeMeasuresCategoriesDb = require('../measure-category/measures-categorie
 const { validatePositiveInteger } = require('../../../models/validators')
 const resetDatabase = require('../../../../db/sqlite/index')
 const { makeDbConnector, closeDbConnections } = require('../index')
-const series = require('async/series')
+const async = require('async')
 const errorHandler = require('../error-handler/index')
 const getMockMeasureCategory = require('../../../models/measure-category/fixture')
 
@@ -75,7 +75,7 @@ describe('measuresCategoriesDb', () => {
       })
     }
 
-    series(insertTasks, error => {
+    async.series(insertTasks, error => {
       if (error) {
         return done(error)
       }
@@ -99,7 +99,7 @@ describe('measuresCategoriesDb', () => {
   it('should fail on insert same name twice', done => {
     const mockMeasure = getMockMeasureCategory()
 
-    series([
+    async.series([
       callback => measuresCategoriesDb.insert(mockMeasure, callback),
       callback => measuresCategoriesDb.insert(mockMeasure, callback)
     ], error => {

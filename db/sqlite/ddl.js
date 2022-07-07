@@ -1,5 +1,5 @@
 const { makeDbConnector, closeDbConnections } = require('../../src/data-access/sqlite/index')
-const waterfall = require('async/waterfall')
+const async = require('async')
 
 function createSchema ({ dbPath } = { }, mainCallback) {
   if (!dbPath) {
@@ -12,7 +12,7 @@ function createSchema ({ dbPath } = { }, mainCallback) {
 
     console.log('Setting up database...')
 
-    waterfall([
+    async.waterfall([
       callback => enableForeignKey(db, callback),
       callback => createMeasuresValuesTypesTable(db, callback),
       callback => createMeasuresCategoriesTable(db, callback),
@@ -46,11 +46,20 @@ function createSchema ({ dbPath } = { }, mainCallback) {
   dbConnector.connectDb(postDbConnection)
 }
 
+function runQuery (db, sql, callback) {
+  try {
+    db.prepare(sql).run()
+    return callback(null)
+  } catch (err) {
+    return callback(err)
+  }
+}
+
 function enableForeignKey (db, callback) {
   console.log('enableForeignKey')
   const sql =
     'PRAGMA foreign_keys = ON'
-  db.run(sql, [], callback)
+  runQuery(db, sql, callback)
 }
 
 function createMeasuresValuesTypesTable (db, callback) {
@@ -60,7 +69,7 @@ function createMeasuresValuesTypesTable (db, callback) {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL UNIQUE
       )`
-  db.run(sql, [], callback)
+  runQuery(db, sql, callback)
 }
 
 function createMeasuresCategoriesTable (db, callback) {
@@ -70,7 +79,7 @@ function createMeasuresCategoriesTable (db, callback) {
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL UNIQUE
         )`
-  db.run(sql, [], callback)
+  runQuery(db, sql, callback)
 }
 
 function createMeasuresTable (db, callback) {
@@ -90,7 +99,7 @@ function createMeasuresTable (db, callback) {
             ON DELETE CASCADE 
             ON UPDATE NO ACTION
       )`
-  db.run(sql, [], callback)
+  runQuery(db, sql, callback)
 }
 
 function createTriggerToDeleteMeasureOnItsCategoryDelete (db, callback) {
@@ -103,7 +112,7 @@ function createTriggerToDeleteMeasureOnItsCategoryDelete (db, callback) {
           DELETE FROM measures
           WHERE category_id = OLD.id;
        END;`
-  db.run(sql, [], callback)
+  runQuery(db, sql, callback)
 }
 
 function createTriggerToDeleteMeasureOnItsValueTypeDelete (db, callback) {
@@ -116,7 +125,7 @@ function createTriggerToDeleteMeasureOnItsValueTypeDelete (db, callback) {
           DELETE FROM measures
           WHERE value_type_id = OLD.id;
        END;`
-  db.run(sql, [], callback)
+  runQuery(db, sql, callback)
 }
 
 function createSexTable (db, callback) {
@@ -126,7 +135,7 @@ function createSexTable (db, callback) {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL UNIQUE
       )`
-  db.run(sql, [], callback)
+  runQuery(db, sql, callback)
 }
 
 function createMeasuresNormTable (db, callback) {
@@ -148,7 +157,7 @@ function createMeasuresNormTable (db, callback) {
             ON DELETE CASCADE 
             ON UPDATE NO ACTION
       )`
-  db.run(sql, [], callback)
+  runQuery(db, sql, callback)
 }
 
 function createTriggerToDeleteMeasureNormOnItsMeasureDelete (db, callback) {
@@ -161,7 +170,7 @@ function createTriggerToDeleteMeasureNormOnItsMeasureDelete (db, callback) {
           DELETE FROM measures_norms
           WHERE measure_id = OLD.id;
        END;`
-  db.run(sql, [], callback)
+  runQuery(db, sql, callback)
 }
 
 function createTriggerToDeleteMeasureNormOnItsSexDelete (db, callback) {
@@ -174,7 +183,7 @@ function createTriggerToDeleteMeasureNormOnItsSexDelete (db, callback) {
           DELETE FROM measures_norms
           WHERE sex_id = OLD.id;
        END;`
-  db.run(sql, [], callback)
+  runQuery(db, sql, callback)
 }
 
 function createClientsTable (db, callback) {
@@ -194,7 +203,7 @@ function createClientsTable (db, callback) {
             ON DELETE CASCADE 
             ON UPDATE NO ACTION
       )`
-  db.run(sql, [], callback)
+  runQuery(db, sql, callback)
 }
 
 function createClientsKeyValuePairsTable (db, callback) {
@@ -210,7 +219,7 @@ function createClientsKeyValuePairsTable (db, callback) {
             ON DELETE CASCADE 
             ON UPDATE NO ACTION
       )`
-  db.run(sql, [], callback)
+  runQuery(db, sql, callback)
 }
 
 function createTriggerToDeleteKeyValuePairOnItsClientDelete (db, callback) {
@@ -223,7 +232,7 @@ function createTriggerToDeleteKeyValuePairOnItsClientDelete (db, callback) {
           DELETE FROM clients_key_value_pairs
           WHERE client_id = OLD.id;
        END;`
-  db.run(sql, [], callback)
+  runQuery(db, sql, callback)
 }
 
 function createClientsMeasuresTable (db, callback) {
@@ -243,7 +252,7 @@ function createClientsMeasuresTable (db, callback) {
             ON DELETE CASCADE 
             ON UPDATE NO ACTION
       )`
-  db.run(sql, [], callback)
+  runQuery(db, sql, callback)
 }
 
 function createTriggerToDeleteClientMeasureOnItsClientDelete (db, callback) {
@@ -256,7 +265,7 @@ function createTriggerToDeleteClientMeasureOnItsClientDelete (db, callback) {
           DELETE FROM clients_measures
           WHERE client_id = OLD.id;
        END;`
-  db.run(sql, [], callback)
+  runQuery(db, sql, callback)
 }
 
 function createTriggerToDeleteClientMeasureOnItsMeasureDelete (db, callback) {
@@ -269,7 +278,7 @@ function createTriggerToDeleteClientMeasureOnItsMeasureDelete (db, callback) {
           DELETE FROM clients_measures
           WHERE measure_id = OLD.id;
        END;`
-  db.run(sql, [], callback)
+  runQuery(db, sql, callback)
 }
 
 module.exports = createSchema

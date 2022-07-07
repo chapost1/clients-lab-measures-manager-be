@@ -1,6 +1,6 @@
 const { makeDbConnector, closeDbConnections } = require('../../src/data-access/sqlite/index')
 const { MEASURES_VALUES_TYPES } = require('../../src/models/measure/measures-values-types')
-const waterfall = require('async/waterfall')
+const async = require('async')
 
 function setupDefaultData ({ dbPath } = { }, mainCallback) {
   if (!dbPath) {
@@ -14,7 +14,7 @@ function setupDefaultData ({ dbPath } = { }, mainCallback) {
 
     console.log('Setting up database...')
 
-    waterfall([
+    async.waterfall([
       callback => addMeasuresValueTypes(db, callback)
     ], err => {
       if (err) {
@@ -42,7 +42,13 @@ function addMeasuresValueTypes (db, callback) {
   const sql =
     `INSERT INTO measures_values_types (name)
      VALUES ${Array(params.length).fill('(?)').join(', ')}`
-  db.run(sql, params, callback)
+  try {
+    const stmt = db.prepare(sql)
+    stmt.run.apply(stmt, params)
+    return callback(null)
+  } catch (err) {
+    return callback(err)
+  }
 }
 
 module.exports = setupDefaultData

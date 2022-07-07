@@ -3,7 +3,7 @@ const makeMeasuresCategoriesDb = require('../../data-access/sqlite/measure-categ
 const makeListMeasuresCategories = require('./list-measures-categories')
 const makeAddMeasureCategory = require('./add-measure-category')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
-const series = require('async/series')
+const async = require('async')
 const getMockMeasureCategory = require('../../models/measure-category/fixture')
 const errorHandler = require('../../data-access/sqlite/error-handler/index')
 const { ModelConstructionError } = require('../../common/custom-error-types')
@@ -64,7 +64,7 @@ describe('listMeasuresCategories', () => {
       })
     }
 
-    series(insertTasks, error => {
+    async.series(insertTasks, error => {
       if (error) {
         return done(error)
       }

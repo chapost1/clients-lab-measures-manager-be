@@ -24,11 +24,11 @@ module.exports = function makeMeasuresCategoriesDb ({ dbConnector, errorHandler 
 
     dbConnector.insert(sql, [name], postInsert)
 
-    function postInsert (err) {
+    function postInsert (err, info) {
       if (err) {
         return callback(errorHandler(err))
       }
-      callback(null, this.lastID)
+      callback(null, info.lastInsertRowid)
     }
   }
 

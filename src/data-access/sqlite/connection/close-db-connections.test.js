@@ -22,7 +22,7 @@ describe('closeDbConnections', () => {
     })
   })
 
-  it('should change db open flag to false', done => {
+  it('should change open flag to false, on close connection', done => {
     const dbConnector = makeDbConnector({ dbPath })
 
     let dbRef = null
@@ -35,27 +35,11 @@ describe('closeDbConnections', () => {
       }
       try {
         expect(connections[dbPath] === db).toBeTruthy()
-        expect(db.open).toBeFalsy()
         dbRef = db
-
-        changeOpenStateToTruthy()
+        closeDbConnections(postClose)
       } catch (e) {
         done(e)
       }
-    }
-
-    function changeOpenStateToTruthy () {
-      dbRef.run('select 1', (err) => {
-        if (err) {
-          return done(err)
-        }
-        try {
-          expect(dbRef.open).toBeTruthy()
-          closeDbConnections(postClose)
-        } catch (e) {
-          done(e)
-        }
-      })
     }
 
     function postClose (err) {
@@ -65,44 +49,7 @@ describe('closeDbConnections', () => {
 
       try {
         expect(dbRef.open).toBeFalsy()
-        done()
-      } catch (e) {
-        done(e)
-      }
-    }
-  })
-
-  it('should not return error even if db connections is not open', done => {
-    const dbConnector = makeDbConnector({ dbPath })
-
-    dbConnector.connectDb(postDbConnection)
-
-    function postDbConnection (err, db) {
-      if (err) {
-        return done(err)
-      }
-      try {
-        expect(connections[dbPath] === db).toBeTruthy()
-
-        db.close(error => {
-          if (error) {
-            // didn't close appropriately earlier
-            return done(err)
-          }
-          closeDbConnections(postClose)
-        })
-      } catch (e) {
-        done(e)
-      }
-    }
-
-    function postClose (err) {
-      if (err) {
-        return done(err)
-      }
-
-      try {
-        expect(err).toBeFalsy()
+        expect(connections[dbPath]).toBeUndefined()
         done()
       } catch (e) {
         done(e)

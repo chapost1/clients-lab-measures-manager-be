@@ -5,6 +5,7 @@ const notFound = require('./controllers/not-found')
 const routes = require('./routes/index')
 const terminate = require('./terminate/index')
 const { closeDataAccessConnections } = require('./data-access/index')
+const async = require('async')
 
 const app = express()
 
@@ -32,10 +33,13 @@ server.on('close', () => {
 
 process.on('uncaughtException', error => {
   console.log('uncaughtException')
-  terminate(server, error)
+  async.series([
+    closeDataAccessConnections
+  ], () => terminate(server, error))
 })
 
-process.on('SIGINT', () => closeDataAccessConnections(() => process.exit(0)))
+process.on('SIGHUP', () => closeDataAccessConnections(() => process.exit(0)))
+  .on('SIGINT', () => closeDataAccessConnections(() => process.exit(0)))
   .on('SIGTERM', () => closeDataAccessConnections(() => process.exit(0)))
 
 module.exports = app

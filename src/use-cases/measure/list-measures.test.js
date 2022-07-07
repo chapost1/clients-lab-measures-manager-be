@@ -7,7 +7,7 @@ const makeAddMeasure = require('./add-measure')
 const makeAddMeasureCategory = require('../measure-category/add-measure-category')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
 const errorHandler = require('../../data-access/sqlite/error-handler/index')
-const series = require('async/series')
+const async = require('async')
 const getMockMeasure = require('../../models/measure/fixture')
 const parseDbMeasure = require('../../data-access/sqlite/measure/parse-db-measure')
 const { ModelConstructionError, InvalidRationalValueError } = require('../../common/custom-error-types')
@@ -85,7 +85,7 @@ describe('listMeasures', () => {
         })
       }
 
-      series(insertTasks, error => {
+      async.series(insertTasks, error => {
         if (error) {
           return done(error)
         }

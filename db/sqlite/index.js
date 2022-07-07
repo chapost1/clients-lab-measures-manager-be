@@ -1,6 +1,6 @@
 const createSchema = require('./ddl')
 const setupDefaultData = require('./dml')
-const waterfall = require('async/waterfall')
+const async = require('async')
 const fs = require('fs')
 
 function resetDatabase ({ dbPath } = { dbPath: process.env.SQLITE_DB_PATH }, mainCallback) {
@@ -13,7 +13,7 @@ function resetDatabase ({ dbPath } = { dbPath: process.env.SQLITE_DB_PATH }, mai
     return mainCallback(e)
   }
 
-  waterfall([
+  async.waterfall([
     callback => createSchema({ dbPath }, callback),
     callback => setupDefaultData({ dbPath }, callback)
   ], err => {

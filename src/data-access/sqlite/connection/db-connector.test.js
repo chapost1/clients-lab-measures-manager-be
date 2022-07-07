@@ -36,7 +36,7 @@ describe('dbConnector.connectDb', () => {
     })
   })
 
-  it('should add db with open state as false at start (no query)', done => {
+  it('should add db with open state as true', done => {
     const dbConnector = makeDbConnector({ dbPath })
     try {
       expect(connections[dbPath]).toBeUndefined()
@@ -48,37 +48,8 @@ describe('dbConnector.connectDb', () => {
         return done(err)
       }
       try {
-        expect(db.open).toBeFalsy()
+        expect(db.open).toBeTruthy()
         done()
-      } catch (e) {
-        done(e)
-      }
-    })
-  })
-
-  it('should add db with open state as true after running a query (which means connection is working)', done => {
-    const dbConnector = makeDbConnector({ dbPath })
-    try {
-      expect(connections[dbPath]).toBeUndefined()
-    } catch (e) {
-      done(e)
-    }
-    dbConnector.connectDb((err, db) => {
-      if (err) {
-        return done(err)
-      }
-      try {
-        db.run('select 1', (err) => {
-          if (err) {
-            return done(err)
-          }
-          try {
-            expect(db.open).toBeTruthy()
-            return done()
-          } catch (e) {
-            done(e)
-          }
-        })
       } catch (e) {
         done(e)
       }

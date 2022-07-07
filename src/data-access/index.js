@@ -1,8 +1,8 @@
-const series = require('async/series')
+const async = require('async')
 const { closeDbConnections: closeSqliteConnections } = require('./sqlite/index')
 
 function closeDataAccessConnections (callback = () => {}) {
-  series([
+  async.series([
     closeSqliteConnections
   ], () => callback(null))
 }
