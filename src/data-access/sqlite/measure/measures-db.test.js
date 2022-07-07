@@ -5,6 +5,7 @@ const makeMeasuresDb = require('./measures-db')
 const { makeDbConnector, closeDbConnections } = require('../index')
 const series = require('async/series')
 const parseDbMeasure = require('./parse-db-measure')
+const errorHandler = require('../error-handler/index')
 const getMockMeasure = require('../../../models/measure/fixture')
 
 const dbPath = process.env.SQLITE_DB_PATH
@@ -12,8 +13,8 @@ const dbPath = process.env.SQLITE_DB_PATH
 const dbConnector = makeDbConnector({ dbPath })
 
 describe('measuresDb', () => {
-  const measuresDb = makeMeasuresDb({ dbConnector, parseDbMeasure })
-  const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector })
+  const measuresDb = makeMeasuresDb({ dbConnector, parseDbMeasure, errorHandler })
+  const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector, errorHandler })
 
   beforeEach(done => {
     closeDbConnections(() => resetDatabase({ dbPath }, err => done(err)))

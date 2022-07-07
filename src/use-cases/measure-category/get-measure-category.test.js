@@ -4,18 +4,19 @@ const makeGetMeasureCategory = require('./get-measure-category')
 const makeAddMeasureCategory = require('./add-measure-category')
 const { validatePositiveInteger } = require('../../models/validators')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
-const { NOT_FOUND_ERROR } = require('../error-types')
 const getMockMeasureCategory = require('../../models/measure-category/fixture')
+const errorHandler = require('../../data-access/sqlite/error-handler/index')
+const { NotFoundError, ValueError, ModelConstructionError } = require('../../common/custom-error-types')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
 const dbConnector = makeDbConnector({ dbPath })
 
 describe('getMeasureCategory', () => {
-  const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector })
+  const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector, errorHandler })
 
-  const getMeasureCategory = makeGetMeasureCategory({ measuresCategoriesDb, validatePositiveInteger })
-  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb })
+  const getMeasureCategory = makeGetMeasureCategory({ measuresCategoriesDb, validatePositiveInteger, NotFoundError, ValueError })
+  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb, ModelConstructionError })
 
   beforeEach(done => {
     closeDbConnections(() => resetDatabase({ dbPath }, err => done(err)))
@@ -25,7 +26,7 @@ describe('getMeasureCategory', () => {
     getMeasureCategory(null, err => {
       try {
         expect(err).not.toBeFalsy()
-        expect(err).toBeInstanceOf(Error)
+        expect(err).toBeInstanceOf(ValueError)
         done()
       } catch (e) {
         done(e)
@@ -37,7 +38,7 @@ describe('getMeasureCategory', () => {
     getMeasureCategory(1.2, err => {
       try {
         expect(err).not.toBeFalsy()
-        expect(err).toBeInstanceOf(Error)
+        expect(err).toBeInstanceOf(ValueError)
         done()
       } catch (e) {
         done(e)
@@ -50,7 +51,7 @@ describe('getMeasureCategory', () => {
     getMeasureCategory(1, err => {
       try {
         expect(err).not.toBeFalsy()
-        expect(err.type).toBe(NOT_FOUND_ERROR)
+        expect(err).toBeInstanceOf(NotFoundError)
         expect(err.message).toBe('measure category with the selected id can not be found')
         done()
       } catch (e) {

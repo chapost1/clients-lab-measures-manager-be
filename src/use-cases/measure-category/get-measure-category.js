@@ -1,10 +1,8 @@
-const { NOT_FOUND_ERROR } = require('../error-types')
-
-module.exports = function makeGetMeasureCategory ({ measuresCategoriesDb, validatePositiveInteger }) {
+module.exports = function makeGetMeasureCategory ({ measuresCategoriesDb, validatePositiveInteger, NotFoundError, ValueError }) {
   return function getMeasureCategory (id, callback) {
     const { error: idError, moderated: moderatedId } = validatePositiveInteger({ integer: id, fieldName: 'id', isRequired: true })
     if (idError) {
-      return callback(idError)
+      return callback(new ValueError(idError.message))
     }
 
     measuresCategoriesDb.findById(moderatedId, postFindById)
@@ -13,11 +11,7 @@ module.exports = function makeGetMeasureCategory ({ measuresCategoriesDb, valida
       if (err) {
         return callback(err)
       } else if (!foundMeasureCategory) {
-        const cbError = {
-          message: 'measure category with the selected id can not be found',
-          type: NOT_FOUND_ERROR
-        }
-        return callback(cbError)
+        return callback(new NotFoundError('measure category with the selected id can not be found'))
       } else {
         return callback(null, foundMeasureCategory)
       }

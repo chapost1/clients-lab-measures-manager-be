@@ -6,10 +6,11 @@ const makeAddMeasure = require('./add-measure')
 const makeDeleteMeasure = require('./delete-measure')
 const makeGetMeasure = require('./get-measure')
 const makeListMeasures = require('./list-measures')
+const { ModelConstructionError, NotFoundError, InvalidRationalValueError, ValueError } = require('../../common/custom-error-types')
 
-const addMeasure = makeAddMeasure({ measuresDb, measuresCategoriesDb, measuresValuesTypesDb })
-const deleteMeasure = makeDeleteMeasure({ measuresDb, validatePositiveInteger })
-const getMeasure = makeGetMeasure({ measuresDb, validatePositiveInteger })
+const addMeasure = makeAddMeasure({ measuresDb, measuresCategoriesDb, measuresValuesTypesDb, ModelConstructionError, InvalidRationalValueError })
+const deleteMeasure = makeDeleteMeasure({ measuresDb, validatePositiveInteger, NotFoundError, ValueError })
+const getMeasure = makeGetMeasure({ measuresDb, validatePositiveInteger, NotFoundError, ValueError })
 const listMeasures = makeListMeasures({ measuresDb })
 
 module.exports = Object.freeze({

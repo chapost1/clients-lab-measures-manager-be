@@ -5,18 +5,19 @@ const { validatePositiveInteger } = require('../../models/validators')
 const makeAddMeasureCategory = require('./add-measure-category')
 const makeListMeasuresCategories = require('./list-measures-categories')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
-const { NOT_FOUND_ERROR } = require('../error-types')
 const getMockMeasureCategory = require('../../models/measure-category/fixture')
+const errorHandler = require('../../data-access/sqlite/error-handler/index')
+const { NotFoundError, ValueError, ModelConstructionError } = require('../../common/custom-error-types')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
 const dbConnector = makeDbConnector({ dbPath })
 
 describe('deleteMeasureCategory', () => {
-  const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector })
+  const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector, errorHandler })
 
-  const deleteMeasureCategory = makeDeleteMeasureCategory({ measuresCategoriesDb, validatePositiveInteger })
-  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb })
+  const deleteMeasureCategory = makeDeleteMeasureCategory({ measuresCategoriesDb, validatePositiveInteger, NotFoundError, ValueError })
+  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb, ModelConstructionError })
   const listMeasuresCategories = makeListMeasuresCategories({ measuresCategoriesDb })
 
   beforeEach(done => {
@@ -27,7 +28,7 @@ describe('deleteMeasureCategory', () => {
     deleteMeasureCategory(null, err => {
       try {
         expect(err).not.toBeFalsy()
-        expect(err).toBeInstanceOf(Error)
+        expect(err).toBeInstanceOf(ValueError)
         done()
       } catch (e) {
         done(e)
@@ -39,7 +40,7 @@ describe('deleteMeasureCategory', () => {
     deleteMeasureCategory('rewfsd', err => {
       try {
         expect(err).not.toBeFalsy()
-        expect(err).toBeInstanceOf(Error)
+        expect(err).toBeInstanceOf(ValueError)
         done()
       } catch (e) {
         done(e)
@@ -51,7 +52,7 @@ describe('deleteMeasureCategory', () => {
     deleteMeasureCategory(1, err => { // nothing exists by default
       try {
         expect(err).not.toBeFalsy()
-        expect(err.type).toBe(NOT_FOUND_ERROR)
+        expect(err).toBeInstanceOf(NotFoundError)
         done()
       } catch (e) {
         done(e)

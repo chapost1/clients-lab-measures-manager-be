@@ -1,10 +1,8 @@
-const { NOT_FOUND_ERROR } = require('../error-types')
-
-module.exports = function makeDeleteMeasure ({ measuresDb, validatePositiveInteger }) {
+module.exports = function makeDeleteMeasure ({ measuresDb, validatePositiveInteger, NotFoundError, ValueError }) {
   return function deleteMeasure (id, callback) {
     const { error: idError, moderated: moderatedId } = validatePositiveInteger({ integer: id, fieldName: 'id', isRequired: true })
     if (idError) {
-      return callback(idError)
+      return callback(new ValueError(idError.message))
     }
 
     measuresDb.findById(moderatedId, postFindById)
@@ -13,11 +11,7 @@ module.exports = function makeDeleteMeasure ({ measuresDb, validatePositiveInteg
       if (err) {
         return callback(err)
       } else if (!foundMeasure) {
-        const cbError = {
-          message: 'measure with the selected id can not be found',
-          type: NOT_FOUND_ERROR
-        }
-        return callback(cbError)
+        return callback(new NotFoundError('measure with the selected id can not be found'))
       } else {
         measuresDb.deleteById(id, postDeleteById)
       }

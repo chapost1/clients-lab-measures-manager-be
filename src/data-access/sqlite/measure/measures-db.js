@@ -1,6 +1,4 @@
-const errorHandler = require('../error-handling')
-
-module.exports = function makeMeasuresDb ({ dbConnector, parseDbMeasure }) {
+module.exports = function makeMeasuresDb ({ dbConnector, parseDbMeasure, errorHandler }) {
   return Object.freeze({
     insert,
     findById,

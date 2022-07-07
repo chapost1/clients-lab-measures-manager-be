@@ -1,13 +1,15 @@
+const { ValueError } = require('../common/custom-error-types')
+
 const invalidFieldError = fieldName => {
-  return new Error(`invalid ${fieldName}`)
+  return new ValueError(`invalid ${fieldName}`)
 }
 
 const emptyFieldError = fieldName => {
-  return new Error(`field ${fieldName} cannot be empty`)
+  return new ValueError(`field ${fieldName} cannot be empty`)
 }
 
 const missingRequiredFieldError = fieldName => {
-  return new Error(`${fieldName} field is required`)
+  return new ValueError(`${fieldName} field is required`)
 }
 
 module.exports = Object.freeze({

@@ -1,17 +1,16 @@
-const { MODEL_CONSTRUCTION_ERROR, VALUE_ERROR, INVALID_RATIONAL_VALUE_ERROR, NOT_FOUND_ERROR } = require('../use-cases/error-types')
-const { USER_END_DB_ERROR_INVALID, USER_END_DB_ERROR_CONFLICT } = require('../data-access/error-types')
+const { ValueError, NotFoundError, ModelConstructionError, InvalidRationalValueError, DbConflictError, DbInvalidError } = require('../common/custom-error-types')
 
 const statusCodeByUserErrorTypes = {
-  [VALUE_ERROR]: 400, // Bad Request
-  [NOT_FOUND_ERROR]: 404, // Not Found
-  [USER_END_DB_ERROR_CONFLICT]: 409, // Conflict
-  [MODEL_CONSTRUCTION_ERROR]: 422, // Uprocessable Entity
-  [INVALID_RATIONAL_VALUE_ERROR]: 422, // Uprocessable Entity
-  [USER_END_DB_ERROR_INVALID]: 422 // Uprocessable Entity
+  [ValueError.name]: 400, // Bad Request
+  [NotFoundError.name]: 404, // Not Found
+  [DbConflictError.name]: 409, // Conflict
+  [ModelConstructionError.name]: 422, // Uprocessable Entity
+  [InvalidRationalValueError.name]: 422, // Uprocessable Entity
+  [DbInvalidError.name]: 422 // Uprocessable Entity
 }
 
 const isUserErrorToExplicit = error => {
-  if (error && error.type in statusCodeByUserErrorTypes) {
+  if (error && error.name in statusCodeByUserErrorTypes) {
     return true
   }
   return false
@@ -29,7 +28,7 @@ const jsonResponse = ({ code, payload }) => {
 
 const errorResponseConstructor = error => {
   return jsonResponse({
-    code: statusCodeByUserErrorTypes[error.type],
+    code: statusCodeByUserErrorTypes[error.name],
     payload: {
       error: error.message
     }

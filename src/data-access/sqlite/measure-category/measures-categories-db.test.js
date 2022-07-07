@@ -3,6 +3,7 @@ const { validatePositiveInteger } = require('../../../models/validators')
 const resetDatabase = require('../../../../db/sqlite/index')
 const { makeDbConnector, closeDbConnections } = require('../index')
 const series = require('async/series')
+const errorHandler = require('../error-handler/index')
 const getMockMeasureCategory = require('../../../models/measure-category/fixture')
 
 const dbPath = process.env.SQLITE_DB_PATH
@@ -10,7 +11,7 @@ const dbPath = process.env.SQLITE_DB_PATH
 const dbConnector = makeDbConnector({ dbPath })
 
 describe('measuresCategoriesDb', () => {
-  const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector })
+  const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector, errorHandler })
 
   beforeEach(done => {
     closeDbConnections(() => resetDatabase({ dbPath }, err => done(err)))

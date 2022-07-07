@@ -5,20 +5,21 @@ const makeMeasuresValuesTypesDb = require('../../data-access/sqlite/measure-valu
 const makeAddMeasure = require('./add-measure')
 const makeAddMeasureCategory = require('../measure-category/add-measure-category')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
+const errorHandler = require('../../data-access/sqlite/error-handler/index')
 const parseDbMeasure = require('../../data-access/sqlite/measure/parse-db-measure')
-const { MODEL_CONSTRUCTION_ERROR, INVALID_RATIONAL_VALUE_ERROR } = require('../error-types')
+const { ModelConstructionError, InvalidRationalValueError } = require('../../common/custom-error-types')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
 const dbConnector = makeDbConnector({ dbPath })
 
 describe('addMeasure', () => {
-  const measuresDb = makeMeasuresDb({ dbConnector, parseDbMeasure })
-  const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector })
-  const measuresValuesTypesDb = makeMeasuresValuesTypesDb({ dbConnector })
+  const measuresDb = makeMeasuresDb({ dbConnector, parseDbMeasure, errorHandler })
+  const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector, errorHandler })
+  const measuresValuesTypesDb = makeMeasuresValuesTypesDb({ dbConnector, errorHandler })
 
-  const addMeasure = makeAddMeasure({ measuresDb, measuresCategoriesDb, measuresValuesTypesDb })
-  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb })
+  const addMeasure = makeAddMeasure({ measuresDb, measuresCategoriesDb, measuresValuesTypesDb, ModelConstructionError, InvalidRationalValueError })
+  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb, ModelConstructionError })
 
   beforeEach(done => {
     closeDbConnections(() => resetDatabase({ dbPath }, err => done(err)))
@@ -29,7 +30,7 @@ describe('addMeasure', () => {
       try {
         expect(addedMesureId).toBeFalsy()
         expect(err).not.toBeFalsy()
-        expect(err.type).toBe(MODEL_CONSTRUCTION_ERROR)
+        expect(err).toBeInstanceOf(ModelConstructionError)
         done()
       } catch (e) {
         done(e)
@@ -42,7 +43,7 @@ describe('addMeasure', () => {
       try {
         expect(addedMesureId).toBeFalsy()
         expect(err).not.toBeFalsy()
-        expect(err.type).toBe(MODEL_CONSTRUCTION_ERROR)
+        expect(err).toBeInstanceOf(ModelConstructionError)
         done()
       } catch (e) {
         done(e)
@@ -55,7 +56,7 @@ describe('addMeasure', () => {
       try {
         expect(addedMesureId).toBeFalsy()
         expect(err).not.toBeFalsy()
-        expect(err.type).toBe(MODEL_CONSTRUCTION_ERROR)
+        expect(err).toBeInstanceOf(ModelConstructionError)
         done()
       } catch (e) {
         done(e)
@@ -69,7 +70,7 @@ describe('addMeasure', () => {
       try {
         expect(addedMesureId).toBeFalsy()
         expect(err).not.toBeFalsy()
-        expect(err.type).toBe(INVALID_RATIONAL_VALUE_ERROR)
+        expect(err).toBeInstanceOf(InvalidRationalValueError)
         expect(err.message).toBe('measure category id does not exists')
         done()
       } catch (e) {
@@ -96,7 +97,7 @@ describe('addMeasure', () => {
       try {
         expect(addedMeasureId).toBeFalsy()
         expect(err).not.toBeFalsy()
-        expect(err.type).toBe(INVALID_RATIONAL_VALUE_ERROR)
+        expect(err).toBeInstanceOf(InvalidRationalValueError)
         expect(err.message).toBe('measure value type id does not exists')
         done()
       } catch (e) {

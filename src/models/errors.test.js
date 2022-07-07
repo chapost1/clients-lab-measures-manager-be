@@ -1,4 +1,5 @@
 const { invalidFieldError, missingRequiredFieldError, emptyFieldError } = require('./errors')
+const { ValueError } = require('../common/custom-error-types')
 
 const fieldErrorsToTest = [
   {
@@ -23,7 +24,7 @@ const fieldName = 'some_dummy_field_name'
 for (const fieldErorr of fieldErrorsToTest) {
   describe(fieldErorr.name, () => {
     it('should be instance of error', () => {
-      expect(fieldErorr.method(fieldName)).toBeInstanceOf(Error)
+      expect(fieldErorr.method(fieldName)).toBeInstanceOf(ValueError)
     })
 
     it('should contain message which its format is as in the specs', () => {

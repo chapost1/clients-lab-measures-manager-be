@@ -1,15 +1,12 @@
 const makeMeasure = require('../../models/measure/index')
-const { MODEL_CONSTRUCTION_ERROR, INVALID_RATIONAL_VALUE_ERROR } = require('../error-types')
 
-module.exports = function makeAddMeasure ({ measuresDb, measuresCategoriesDb, measuresValuesTypesDb }) {
+module.exports = function makeAddMeasure ({
+  measuresDb, measuresCategoriesDb, measuresValuesTypesDb, ModelConstructionError, InvalidRationalValueError
+}) {
   return function addMeasure (measureInfo, callback) {
     const { error, data: measure } = makeMeasure(measureInfo)
     if (error) {
-      const cbError = {
-        message: error.message,
-        type: MODEL_CONSTRUCTION_ERROR
-      }
-      return callback(cbError)
+      return callback(new ModelConstructionError(error.message))
     }
 
     measuresValuesTypesDb.findById(measure.valueTypeId, postFindValueTypeById)
@@ -19,11 +16,7 @@ module.exports = function makeAddMeasure ({ measuresDb, measuresCategoriesDb, me
         return callback(err)
       }
       if (!valueType) {
-        const cbError = {
-          message: 'measure value type id does not exists',
-          type: INVALID_RATIONAL_VALUE_ERROR
-        }
-        return callback(cbError)
+        return callback(new InvalidRationalValueError('measure value type id does not exists'))
       }
 
       measuresCategoriesDb.findById(measure.categoryId, postFindCategoryById)
@@ -34,11 +27,7 @@ module.exports = function makeAddMeasure ({ measuresDb, measuresCategoriesDb, me
         return callback(err)
       }
       if (!category) {
-        const cbError = {
-          message: 'measure category id does not exists',
-          type: INVALID_RATIONAL_VALUE_ERROR
-        }
-        return callback(cbError)
+        return callback(new InvalidRationalValueError('measure category id does not exists'))
       }
 
       measuresDb.insert(measure, postAddMeasure)

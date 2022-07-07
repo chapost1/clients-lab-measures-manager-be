@@ -2,18 +2,18 @@ const makeMeasuresCategoriesDb = require('../../data-access/sqlite/measure-categ
 const resetDatabase = require('../../../db/sqlite/index')
 const makeAddMeasureCategory = require('./add-measure-category')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
-const { MODEL_CONSTRUCTION_ERROR } = require('../error-types')
 const getMockMeasureCategory = require('../../models/measure-category/fixture')
-const { USER_END_DB_ERROR_CONFLICT } = require('../../data-access/error-types')
+const errorHandler = require('../../data-access/sqlite/error-handler/index')
+const { ModelConstructionError, DbConflictError } = require('../../common/custom-error-types')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
 const dbConnector = makeDbConnector({ dbPath })
 
 describe('makeAddMeasureCategory', () => {
-  const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector })
+  const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector, errorHandler })
 
-  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb })
+  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb, ModelConstructionError })
 
   beforeEach(done => {
     closeDbConnections(() => resetDatabase({ dbPath }, err => done(err)))
@@ -24,7 +24,7 @@ describe('makeAddMeasureCategory', () => {
       try {
         expect(addedMeasureCategoryId).toBeFalsy()
         expect(err).not.toBeFalsy()
-        expect(err.type).toBe(MODEL_CONSTRUCTION_ERROR)
+        expect(err).toBeInstanceOf(ModelConstructionError)
         done()
       } catch (e) {
         done(e)
@@ -37,7 +37,7 @@ describe('makeAddMeasureCategory', () => {
       try {
         expect(addedMeasureCategoryId).toBeFalsy()
         expect(err).not.toBeFalsy()
-        expect(err.type).toBe(MODEL_CONSTRUCTION_ERROR)
+        expect(err).toBeInstanceOf(ModelConstructionError)
         done()
       } catch (e) {
         done(e)
@@ -50,7 +50,7 @@ describe('makeAddMeasureCategory', () => {
       try {
         expect(addedMeasureCategoryId).toBeFalsy()
         expect(err).not.toBeFalsy()
-        expect(err.type).toBe(MODEL_CONSTRUCTION_ERROR)
+        expect(err).toBeInstanceOf(ModelConstructionError)
         done()
       } catch (e) {
         done(e)
@@ -88,7 +88,7 @@ describe('makeAddMeasureCategory', () => {
       try {
         expect(addedMeasureCategoryId).toBeFalsy()
         expect(err).not.toBeFalsy()
-        expect(err.type).toBe(USER_END_DB_ERROR_CONFLICT)
+        expect(err).toBeInstanceOf(DbConflictError)
         done()
       } catch (e) {
         done(e)
