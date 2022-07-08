@@ -33,7 +33,7 @@ describe('measuresCategoriesDb', () => {
     }
   })
 
-  it('should be able to get measure category after have been inserted', done => {
+  it('should be able to findById measure category after have been inserted', done => {
     const mock = getMockMeasureCategory()
 
     measuresCategoriesDb.insert(mock, postMeasureCategoryInsert)
@@ -55,6 +55,24 @@ describe('measuresCategoriesDb', () => {
         expect(found).not.toBeNull()
         expect(found.id).toBe(mock.id)
         expect(found.name).toBe(mock.name)
+        done()
+      } catch (error) {
+        done(error)
+      }
+    }
+  })
+
+  it('should not be able to find one with not exists id, and result should be undefined', done => {
+    const notFoundId = 1
+    measuresCategoriesDb.findById(notFoundId, postFindById)
+
+    function postFindById (error, found) {
+      if (error) { // no error should be gotten
+        return done(error)
+      }
+
+      try {
+        expect(found).toBeUndefined()
         done()
       } catch (error) {
         done(error)
