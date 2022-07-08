@@ -7,9 +7,13 @@ function resetDatabase ({ dbPath } = { dbPath: process.env.SQLITE_DB_PATH }, mai
   console.log('reset database...')
   try {
     const dbPathDir = process.env.SQLITE_DB_PATH_DIR
-    if (dbPathDir && !fs.existsSync(dbPathDir)){
+    if (dbPathDir) {
+    if (!fs.existsSync(dbPathDir)){
       fs.mkdirSync(dbPathDir, { recursive: true });
     }
+  } else {
+    return mainCallback('failed to init db dir, no db path dir var has been given')
+  }
     if (fs.existsSync(dbPath)) {
       fs.unlinkSync(dbPath)
     }
