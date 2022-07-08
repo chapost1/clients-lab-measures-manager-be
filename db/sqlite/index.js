@@ -1,5 +1,5 @@
-const createSchema = require('./ddl')
-const setupDefaultData = require('./dml')
+const createSchema = require('./setup_ddl')
+const setupDefaultData = require('./setup_dml')
 const async = require('async')
 const fs = require('fs')
 
