@@ -19,59 +19,59 @@ describe('makeAddMeasureCategory', () => {
     closeDbConnections(() => resetDatabase({ dbPath }, err => done(err)))
   })
 
-  // it('should fail create model if no param', done => {
-  //   addMeasureCategory(undefined, (err, addedMeasureCategoryId) => {
-  //     try {
-  //       expect(addedMeasureCategoryId).toBeFalsy()
-  //       expect(err).not.toBeFalsy()
-  //       expect(err).toBeInstanceOf(ModelConstructionError)
-  //       done()
-  //     } catch (e) {
-  //       done(e)
-  //     }
-  //   })
-  // })
+  it('should fail create model if no param', done => {
+    addMeasureCategory(undefined, (err, addedMeasureCategoryId) => {
+      try {
+        expect(addedMeasureCategoryId).toBeFalsy()
+        expect(err).not.toBeFalsy()
+        expect(err).toBeInstanceOf(ModelConstructionError)
+        done()
+      } catch (e) {
+        done(e)
+      }
+    })
+  })
 
-  // it('should fail create model if empty object, no name', done => {
-  //   addMeasureCategory({}, (err, addedMeasureCategoryId) => {
-  //     try {
-  //       expect(addedMeasureCategoryId).toBeFalsy()
-  //       expect(err).not.toBeFalsy()
-  //       expect(err).toBeInstanceOf(ModelConstructionError)
-  //       done()
-  //     } catch (e) {
-  //       done(e)
-  //     }
-  //   })
-  // })
+  it('should fail create model if empty object, no name', done => {
+    addMeasureCategory({}, (err, addedMeasureCategoryId) => {
+      try {
+        expect(addedMeasureCategoryId).toBeFalsy()
+        expect(err).not.toBeFalsy()
+        expect(err).toBeInstanceOf(ModelConstructionError)
+        done()
+      } catch (e) {
+        done(e)
+      }
+    })
+  })
 
-  // it('should fail create model if has name but not string', done => {
-  //   addMeasureCategory({ name: 1 }, (err, addedMeasureCategoryId) => {
-  //     try {
-  //       expect(addedMeasureCategoryId).toBeFalsy()
-  //       expect(err).not.toBeFalsy()
-  //       expect(err).toBeInstanceOf(ModelConstructionError)
-  //       done()
-  //     } catch (e) {
-  //       done(e)
-  //     }
-  //   })
-  // })
+  it('should fail create model if has name but not string', done => {
+    addMeasureCategory({ name: 1 }, (err, addedMeasureCategoryId) => {
+      try {
+        expect(addedMeasureCategoryId).toBeFalsy()
+        expect(err).not.toBeFalsy()
+        expect(err).toBeInstanceOf(ModelConstructionError)
+        done()
+      } catch (e) {
+        done(e)
+      }
+    })
+  })
 
-  // it('should create model if object is valid', done => {
-  //   addMeasureCategory(getMockMeasureCategory(), (err, addedMeasureCategoryId) => {
-  //     try {
-  //       expect(err).toBeFalsy()
-  //       expect(addedMeasureCategoryId).not.toBeFalsy()
-  //       expect(addedMeasureCategoryId).toBe(1)
-  //       done()
-  //     } catch (e) {
-  //       done(e)
-  //     }
-  //   })
-  // })
+  it('should create model if object is valid', done => {
+    addMeasureCategory(getMockMeasureCategory(), (err, addedMeasureCategoryId) => {
+      try {
+        expect(err).toBeFalsy()
+        expect(addedMeasureCategoryId).not.toBeFalsy()
+        expect(addedMeasureCategoryId).toBe(1)
+        done()
+      } catch (e) {
+        done(e)
+      }
+    })
+  })
 
-  it('should fail if category name is already exists model , even if object is valid', done => {
+  it('should fail if category name is already exists model, even if object is valid', done => {
     const mock = getMockMeasureCategory()
 
     addMeasureCategory(mock, postFirstInsert)
