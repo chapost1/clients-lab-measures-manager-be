@@ -1,5 +1,3 @@
-const { SqliteError } = require('better-sqlite3')
-
 function makeSqliteUserErrorsFormatter ({ DbApplicationError, DbConflictError, DbInvalidError }) {
   return Object.freeze({
     dbErrorMessagesHandlers: {
