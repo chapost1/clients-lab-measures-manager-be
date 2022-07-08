@@ -88,7 +88,6 @@ describe('makeAddMeasureCategory', () => {
       try {
         expect(addedMeasureCategoryId).toBeFalsy()
         expect(err).not.toBeFalsy()
-        console.log(`actual error: ${err}`)
         expect(err).toBeInstanceOf(DbConflictError)
         done()
       } catch (e) {

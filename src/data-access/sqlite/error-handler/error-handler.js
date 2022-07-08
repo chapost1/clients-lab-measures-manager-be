@@ -76,10 +76,8 @@ module.exports = function makeErrorHandler ({ DbConflictError, DbInvalidError, D
       return null
     }
 
-    if (!(error instanceof SqliteError)) {
-      console.log(`err sqlite: ${SqliteError}`)
-      console.log(`Error: ${error}`)
-      return new DbApplicationError('invalid error (not SqliteError)')
+    if (!(error.message && error.code)) {
+      return new DbApplicationError('invalid error (not having the structure of a proper SqliteError)')
     }
 
     return sqliteUserErrorsFormatter.getDbError(error)

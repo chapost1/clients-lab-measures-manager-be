@@ -14,23 +14,23 @@ describe('errorHandler', () => {
       expect(errorHandler()).toBeNull()
     })
 
-    it('should return DbApplicationError(invalid error (not SqliteError)) if has error with no message', () => {
+    it('should return DbApplicationError(invalid error (not having the structure of a proper SqliteError)) if has error with no message', () => {
       const result = errorHandler({})
       expect(result).toBeInstanceOf(DbApplicationError)
-      expect(result.message).toBe('invalid error (not SqliteError)')
+      expect(result.message).toBe('invalid error (not having the structure of a proper SqliteError)')
     })
 
     it('should not throw error if got unexpected error code', () => {
-      expect(errorHandler.bind(null, new SqliteError('some dummy message', ''))).not.toThrow()
+      expect(errorHandler.bind(null, new SqliteError('some dummy message', 'dummy code'))).not.toThrow()
     })
 
     it('should return DbApplicationError if got unexpected error code', () => {
-      expect(errorHandler(new SqliteError('some dummy message', ''))).toBeInstanceOf(DbApplicationError)
+      expect(errorHandler(new SqliteError('some dummy message', 'dummy code'))).toBeInstanceOf(DbApplicationError)
     })
 
     it('should return error.message, same as recieved', () => {
       const message = 'some dummy message'
-      expect(errorHandler(new SqliteError('some dummy message', '')).message).toBe(message)
+      expect(errorHandler(new SqliteError('some dummy message', 'dummy code')).message).toBe(message)
     })
   })
 
