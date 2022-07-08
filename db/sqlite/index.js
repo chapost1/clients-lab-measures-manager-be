@@ -6,6 +6,10 @@ const fs = require('fs')
 function resetDatabase ({ dbPath } = { dbPath: process.env.SQLITE_DB_PATH }, mainCallback) {
   console.log('reset database...')
   try {
+    const dbPathDir = process.env.SQLITE_DB_PATH_DIR
+    if (dbPathDir && !fs.existsSync(dbPathDir)){
+      fs.mkdirSync(dbPathDir, { recursive: true });
+    }
     if (fs.existsSync(dbPath)) {
       fs.unlinkSync(dbPath)
     }
