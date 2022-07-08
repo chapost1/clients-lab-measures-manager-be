@@ -1,10 +1,20 @@
+const { SqliteError } = require('better-sqlite3')
+
 function makeSqliteUserErrorsFormatter ({ DbApplicationError, DbConflictError, DbInvalidError }) {
   return Object.freeze({
     dbErrorMessagesHandlers: {
       SQLITE_CONSTRAINT_NOTNULL: {
         format: function (message) {
           const fieldsList = message.split(':').pop().trim().split(', ').map(fieldWithTableName => fieldWithTableName.split('.').pop())
-          return `${fieldsList.join(', ')} should not be null`
+          if (fieldsList.length > 1) {
+            return `(${fieldsList.join(', ')}) should not be null`
+          } else {
+            const fieldName = fieldsList[0].trim()
+            if (fieldName.length < 1) {
+              throw Error('invalid notnull constrait error message')
+            }
+            return `${fieldsList[0]} should not be null`
+          }
         },
         DB_ERROR_TYPE: DbInvalidError
       },
@@ -12,8 +22,12 @@ function makeSqliteUserErrorsFormatter ({ DbApplicationError, DbConflictError, D
         format: function (message) {
           const fieldsList = message.split(':').pop().trim().split(', ').map(fieldWithTableName => fieldWithTableName.split('.').pop())
           if (fieldsList.length > 1) {
-            return `${fieldsList.join(', ')} combination should be unique, and already exist`
-          } else { // 1
+            return `(${fieldsList.join(', ')}) combination should be unique, and already exist`
+          } else {
+            const fieldName = fieldsList[0].trim()
+            if (fieldName.length < 1) {
+              throw Error('invalid unique constrait error message')
+            }
             return `${fieldsList[0]} should be unique, and already exist`
           }
         },
@@ -44,7 +58,12 @@ function makeSqliteUserErrorsFormatter ({ DbApplicationError, DbConflictError, D
       if (!this.isFormattable(error.code)) {
         return new DbApplicationError(error.message)
       }
-      const formattedError = this.format(error)
+      let formattedError = null
+      try {
+        formattedError = this.format(error)
+      } catch (e) {
+        return new DbApplicationError(`failed to format sqlite error, with code: ${error.code}, and message: ${error.message}`)
+      }
       return new (this.getDbErrorType(error))(formattedError)
     }
   })
@@ -55,6 +74,10 @@ module.exports = function makeErrorHandler ({ DbConflictError, DbInvalidError, D
   return function errorHandler (error) {
     if (!error) {
       return null
+    }
+
+    if (!(error instanceof SqliteError)) {
+      return new DbApplicationError('invalid error (not SqliteError)')
     }
 
     return sqliteUserErrorsFormatter.getDbError(error)
