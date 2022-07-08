@@ -1,4 +1,4 @@
-const { okResponse, errorHandler } = require('../utils')
+const { okResponse, errorHandler } = require('../response-utils')
 
 module.exports = function makeGetMeasuresCategoriesList ({ listMeasuresCategories }) {
   return function getMeasuresCategoriesList (httpRequest, callback) {

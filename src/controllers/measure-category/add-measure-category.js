@@ -1,4 +1,4 @@
-const { createdResponse, errorHandler } = require('../utils')
+const { createdResponse, errorHandler } = require('../response-utils')
 
 module.exports = function makeAddMeasureCategory ({ addMeasureCategory }) {
   return function postMeasureCategory (httpRequest, callback) {

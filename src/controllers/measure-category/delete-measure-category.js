@@ -1,4 +1,4 @@
-const { operationSuccessResponse, errorHandler } = require('../utils')
+const { operationSuccessResponse, errorHandler } = require('../response-utils')
 
 module.exports = function makeDeleteMeasureCategory ({ deleteMeasureCategory }) {
   return function deleteMeasureCategoryById (httpRequest, callback) {
