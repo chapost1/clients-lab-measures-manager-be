@@ -1,7 +1,7 @@
 name: ci
 
 on:
-  push:
+  pull_request:
     branches:
       - 'main'
 
@@ -9,7 +9,7 @@ env:
   TEST_TAG: chapost/clients-lab-measures-manager-be:test
 
 jobs:
-  docker:
+  docker_build_test:
     runs-on: ubuntu-latest
     steps:
       -
@@ -39,12 +39,3 @@ jobs:
         name: Test
         run: |
           docker run --rm ${{ env.TEST_TAG }}
-      -
-        name: Build and push
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: chapost/clients-lab-measures-manager-be:latest
-          target: prod
