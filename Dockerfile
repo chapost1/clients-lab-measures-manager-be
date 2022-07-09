@@ -13,4 +13,4 @@ FROM base as prod
 RUN npm ci --omit=dev
 COPY . .
 EXPOSE 8080
-CMD [ "npm", "start" ]
+ENTRYPOINT [ "node", "./src/index.js" ]
