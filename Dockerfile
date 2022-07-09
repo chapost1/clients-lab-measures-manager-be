@@ -1,16 +1,16 @@
-FROM node:18.5
+FROM node:18.5 as base
 
-# Create app directory
 WORKDIR /usr/src/app
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
 COPY package*.json ./
 
-RUN npm ci --omit=dev
-
-# Bundle app source
+FROM base as test
+RUN npm ci
 COPY . .
+CMD [ "npm", "test" ]
 
+FROM base as prod
+RUN npm ci --omit=dev
+COPY . .
 EXPOSE 8080
 CMD [ "npm", "start" ]

@@ -5,26 +5,40 @@ on:
     branches: [ "main" ]
 
 jobs:
-  tests:
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [16.x, 18.x]
-
-    steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm test
-  
-  
   build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build the Docker image - target test
+        run: docker build . --file Dockerfile --tag chapost/clients-lab-measures-manager-be:test --target test
+  
+  tests:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Docker Run image with tests suite
+        run: docker run -it --rm test-node-docker-lab-clients:test
+
+  # tests:
+
+  #   runs-on: ubuntu-latest
+
+  #   strategy:
+  #     matrix:
+  #       node-version: [16.x, 18.x]
+
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - name: Use Node.js ${{ matrix.node-version }}
+  #     uses: actions/setup-node@v3
+  #     with:
+  #       node-version: ${{ matrix.node-version }}
+  #       cache: 'npm'
+  #   - run: npm ci
+  #   - run: npm test
+  
+  deploy:
     needs: [tests]
     runs-on: ubuntu-latest
 
