@@ -1,58 +1,48 @@
-name: CI Pipeline
+name: ci
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - 'main'
+
+env:
+  TEST_TAG: chapost/clients-lab-measures-manager-be:test
 
 jobs:
-  build_and_test:
+  docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Build the Docker image - target test
-        run: docker build . --file Dockerfile --tag chapost/clients-lab-measures-manager-be:test --target test
-      - name: Docker Run image with tests suite
-        run: docker run -it --rm test-node-docker-lab-clients:test
-  
-  # tests:
-  #   needs: [build]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Docker Run image with tests suite
-  #       run: docker run -it --rm test-node-docker-lab-clients:test
-
-  # tests:
-
-  #   runs-on: ubuntu-latest
-
-  #   strategy:
-  #     matrix:
-  #       node-version: [16.x, 18.x]
-
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #   - name: Use Node.js ${{ matrix.node-version }}
-  #     uses: actions/setup-node@v3
-  #     with:
-  #       node-version: ${{ matrix.node-version }}
-  #       cache: 'npm'
-  #   - run: npm ci
-  #   - run: npm test
-  
-  deploy:
-    needs: [build_and_test]
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-    - name: docker login
-      uses: docker/login-action@v2
-      with:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag chapost/clients-lab-measures-manager-be:latest
-      
-    - name: Docker Push
-      run: docker push chapost/clients-lab-measures-manager-be
+      -
+        name: Build and export to Docker
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          load: true
+          tags: ${{ env.TEST_TAG }}
+      -
+        name: Test
+        run: |
+          docker run --rm ${{ env.TEST_TAG }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: chapost/clients-lab-measures-manager-be:latest
