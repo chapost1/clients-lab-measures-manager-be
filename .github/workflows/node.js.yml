@@ -35,7 +35,7 @@ jobs:
       with:
           registry: chapost/clients-lab-measures-manager-be
           username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag chapost/clients-lab-measures-manager-be:latest
       
