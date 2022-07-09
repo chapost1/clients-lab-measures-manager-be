@@ -4,7 +4,7 @@
   "description": "Backend for clients lab measures management",
   "main": "index.js",
   "scripts": {
-    "start": "PORT=3000 SQLITE_DB_PATH_DIR=./db/sqlite/state SQLITE_DB_PATH=./db/sqlite/state/dev-db.db node ./src/index.js",
+    "start": "PORT=8080 SQLITE_DB_PATH_DIR=./db/sqlite/state SQLITE_DB_PATH=./db/sqlite/state/dev-db.db node ./src/index.js",
     "test": "npx standard && SQLITE_DB_PATH_DIR=./db/sqlite/state SQLITE_DB_PATH=./db/sqlite/state/test-db.db npx jest --runInBand"
   },
   "author": "Shahar Tal",
