@@ -1,4 +1,4 @@
-name: ci
+name: push main ci/cd
 
 on:
   push:
