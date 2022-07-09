@@ -33,7 +33,7 @@ jobs:
         with:
           context: .
           load: true
-          tags: ${{ env.TEST_TAG }}
+          tags: ${{ env.TEST_TAG }} --target test
       -
         name: Test
         run: |
