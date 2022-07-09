@@ -31,11 +31,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: docker login
-      with:
-        username: ${{ secrets.DOCKER_USER }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
       run: |
         docker login --username=$username --password-stdin
+      env:
+        username: ${{ secrets.DOCKER_USER }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag chapost/clients-lab-measures-manager-be:latest
       
