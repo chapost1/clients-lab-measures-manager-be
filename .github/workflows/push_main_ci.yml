@@ -9,7 +9,7 @@ env:
   TEST_TAG: chapost/clients-lab-measures-manager-be:test
 
 jobs:
-  docker_build_test_deploy_image:
+  docker_build_test_push_image:
     runs-on: ubuntu-latest
     steps:
       -
