@@ -14,7 +14,7 @@ module.exports = function makeMakeValidateBoolean ({ missingRequiredFieldError, 
         return { error: invalidFieldError(fieldName), moderated: null }
       }
 
-      if (!isBoolean(bool)) {
+      if (!isBoolean(bool.toString())) {
         return { error: invalidFieldError(fieldName), moderated: null }
       }
 
