@@ -1,4 +1,11 @@
-module.exports = function buildMakeClient ({ validatePositiveInteger, validateStringInput, validateEmail, validateDate, validateBoolean }) {
+module.exports = function buildMakeClient ({
+  validatePositiveInteger,
+  validateStringInput,
+  validateEmail,
+  validateDate,
+  validateBoolean,
+  validateMobilePhone
+}) {
   return function makeClient ({
     id = null,
     name,
@@ -6,6 +13,7 @@ module.exports = function buildMakeClient ({ validatePositiveInteger, validateSt
     isActive,
     sexId,
     email,
+    phoneNumber,
     address
   } = {}) {
     const { error: nameError, moderated: moderatedName } =
@@ -24,6 +32,12 @@ module.exports = function buildMakeClient ({ validatePositiveInteger, validateSt
       validateStringInput({ string: email, fieldName: 'email', isRequired: true })
     if (emailStrError) {
       return { error: emailStrError, data: null }
+    }
+
+    const { error: phoneNumberStrError, moderated: moderatedPhoneNumberAsString } =
+    validateStringInput({ string: phoneNumber, fieldName: 'phoneNumber', isRequired: true })
+    if (phoneNumberStrError) {
+      return { error: phoneNumberStrError, data: null }
     }
 
     const { error: addressError, moderated: moderatedAddress } =
@@ -55,6 +69,12 @@ module.exports = function buildMakeClient ({ validatePositiveInteger, validateSt
       return { error: dateError, data: null }
     }
 
+    const { error: phoneNumberError, moderated: moderatedPhoneNumber } =
+    validateMobilePhone({ phoneNumber: moderatedPhoneNumberAsString, fieldName: 'phoneNumber', isRequired: true })
+    if (phoneNumberError) {
+      return { error: phoneNumberError, data: null }
+    }
+
     const { error: isActiveError, moderated: moderatedIsActive } =
     validateBoolean({ bool: isActive, fieldName: 'isActive', isRequired: true })
     if (isActiveError) {
@@ -70,7 +90,8 @@ module.exports = function buildMakeClient ({ validatePositiveInteger, validateSt
         isActive: moderatedIsActive,
         sexId: moderatedSexId,
         email: moderatedEmail,
-        address: moderatedAddress
+        address: moderatedAddress,
+        phoneNumber: moderatedPhoneNumber
       })
     }
   }
