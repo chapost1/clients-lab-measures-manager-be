@@ -1,17 +1,19 @@
-const validatePositiveInteger = require('./validate-positive-integer')
+const makeValidatePositiveInteger = require('./validate-positive-integer')
 const { ValueError } = require('../../common/custom-error-types')
 const { invalidFieldError, missingRequiredFieldError } = require('../errors')
 
 const fieldName = 'testFieldName'
 
 describe('validatePositiveInteger', () => {
+  const validatePositiveInteger = makeValidatePositiveInteger({ invalidFieldError, missingRequiredFieldError })
+
   it('should return error if required field is missing', () => {
     const response = validatePositiveInteger({ integer: null, fieldName, isRequired: true })
     expect(response.error).toBeInstanceOf(ValueError)
     expect(response.error).toMatchObject(missingRequiredFieldError(fieldName))
   })
 
-  it('should not return error not field is required and missing', () => {
+  it('should not return error, if field is not required and missing', () => {
     const response = validatePositiveInteger({ integer: null, fieldName, isRequired: false })
     expect(response.error).toBeNull()
     expect(response.moderated).toBeNull()
