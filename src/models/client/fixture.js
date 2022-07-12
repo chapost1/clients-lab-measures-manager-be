@@ -5,8 +5,7 @@ module.exports = function getMockClient () {
     birthDate: '2011-08-04',
     isActive: true,
     sex: {
-      id: 1,
-      name: 'F'
+      id: 1
     },
     contact: {
       email: 'foo@bar.com',

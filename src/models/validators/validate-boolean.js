@@ -14,11 +14,13 @@ module.exports = function makeMakeValidateBoolean ({ missingRequiredFieldError, 
         return { error: invalidFieldError(fieldName), proper: null }
       }
 
-      if (!isBoolean(bool.toString())) {
+      const stringifiedBool = bool.toString()
+
+      if (!isBoolean(stringifiedBool)) {
         return { error: invalidFieldError(fieldName), proper: null }
       }
-
-      return { error: null, proper: JSON.parse(bool) }
+      const properBool = (stringifiedBool === 'true')
+      return { error: null, proper: properBool }
     }
   }
 }

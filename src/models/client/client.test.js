@@ -29,7 +29,6 @@ describe('makeClient', () => {
       const mock = getMockClient()
       const { data: actual } = makeClient(mock)
       const expected = mock
-      delete expected.sex.name// no name relation types names in constructors
       expect(actual).toMatchObject(expected)
     })
 
@@ -38,7 +37,6 @@ describe('makeClient', () => {
       mock.id = 1
       const { data: actual } = makeClient(mock)
       const expected = mock
-      delete expected.sex.name// no name relation types names in constructors
       expect(actual).toMatchObject(expected)
     })
   })
