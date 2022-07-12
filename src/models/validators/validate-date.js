@@ -1,24 +1,21 @@
-module.exports = function makeMakeValidateDate ({ missingRequiredFieldError, invalidFieldError }) {
-  return function makeValidateDate ({ isDate }) {
+module.exports = function makeMakeValidateDate ({ invalidFieldError }) {
+  return function makeValidateDate ({ isDate, validateStringInput }) {
     return function validateDate ({ date, fieldName = 'status', isRequired = true } = {}) {
-      const isFound = date !== undefined && date !== null
-      if (!isFound) {
-        if (isRequired) {
-          return { error: missingRequiredFieldError(fieldName), moderated: null }
-        } else {
-          return { error: null, moderated: null }
-        }
+      const { error: dateStrError, proper: properString } =
+    validateStringInput({ string: date, fieldName, isRequired })
+      if (dateStrError) {
+        return { error: dateStrError, proper: null }
       }
 
-      if (typeof date !== 'string') {
-        return { error: invalidFieldError(fieldName), moderated: null }
+      if (!isRequired && !properString) {
+        return { error: null, proper: null }
       }
 
-      if (!isDate(date)) {
-        return { error: invalidFieldError(fieldName), moderated: null }
+      if (!isDate(properString)) {
+        return { error: invalidFieldError(fieldName), proper: null }
       }
 
-      return { error: null, moderated: date }
+      return { error: null, proper: properString }
     }
   }
 }

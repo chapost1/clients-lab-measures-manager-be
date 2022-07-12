@@ -1,14 +1,12 @@
 const buildMakeClient = require('./client')
-const htmlSanitizer = require('../html-sanitizer')
 const {
   validatePositiveInteger,
-  makeValidateStringInput,
+  validateStringInput,
   validateBoolean,
   validateDate,
   validateEmail,
   validateMobilePhone
 } = require('../validators/index')
-const validateStringInput = makeValidateStringInput({ sanitizer: htmlSanitizer })
 
 const makeClient = buildMakeClient({ validatePositiveInteger, validateStringInput, validateBoolean, validateDate, validateEmail, validateMobilePhone })
 

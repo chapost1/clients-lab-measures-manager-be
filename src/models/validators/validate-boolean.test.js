@@ -18,7 +18,7 @@ describe('validateBoolean', () => {
   it('should not return error, if field is not required and missing', () => {
     const response = validateBoolean({ bool: null, fieldName, isRequired: false })
     expect(response.error).toBeNull()
-    expect(response.moderated).toBeNull()
+    expect(response.proper).toBeNull()
   })
 
   it('should return error if not bool (integer)', () => {
@@ -38,9 +38,9 @@ describe('validateBoolean', () => {
     expect(response.error).toBeNull()
   })
 
-  it('should return moderated Bool if string as bool', () => {
+  it('should return proper Bool if string as bool', () => {
     const response = validateBoolean({ bool: 'false', fieldName, isRequired: true })
     expect(response.error).toBeNull()
-    expect(response.moderated).toBe(false)
+    expect(response.proper).toBe(false)
   })
 })

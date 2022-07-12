@@ -19,7 +19,7 @@ describe('validateStringInput', () => {
     it('should not return error, if field is not required and missing', () => {
       const response = validateStringInput({ string: null, fieldName, isRequired: false })
       expect(response.error).toBeNull()
-      expect(response.moderated).toBeNull()
+      expect(response.proper).toBeNull()
     })
 
     it('should return error if not string (integer)', () => {
@@ -65,7 +65,7 @@ describe('validateStringInput', () => {
       const internalText = 'text'
       const response = validateStringInput({ string: `<div>${internalText}</div>`, fieldName, isRequired: true })
       expect(response.error).toBeNull()
-      expect(response.moderated).toBe(internalText)
+      expect(response.proper).toBe(internalText)
     })
 
     it('should return error if text contains only html', () => {
@@ -78,7 +78,7 @@ describe('validateStringInput', () => {
       const sideCarText = 'text'
       const response = validateStringInput({ string: `<script>alert(1)</script>${sideCarText}`, fieldName, isRequired: true })
       expect(response.error).toBeNull()
-      expect(response.moderated).toBe(sideCarText)
+      expect(response.proper).toBe(sideCarText)
     })
   })
 })

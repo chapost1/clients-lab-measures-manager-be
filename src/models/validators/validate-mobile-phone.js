@@ -1,24 +1,21 @@
-module.exports = function makeMakeValidateMobilePhone ({ missingRequiredFieldError, invalidFieldError }) {
-  return function makeValidateMobilePhone ({ isMobilePhone }) {
+module.exports = function makeMakeValidateMobilePhone ({ invalidFieldError }) {
+  return function makeValidateMobilePhone ({ isMobilePhone, validateStringInput }) {
     return function validateMobilePhone ({ phoneNumber, fieldName = 'phoneNumber', isRequired = true } = {}) {
-      const isFound = phoneNumber !== undefined && phoneNumber !== null
-      if (!isFound) {
-        if (isRequired) {
-          return { error: missingRequiredFieldError(fieldName), moderated: null }
-        } else {
-          return { error: null, moderated: null }
-        }
+      const { error: phoneStrError, proper: properString } =
+    validateStringInput({ string: phoneNumber, fieldName, isRequired })
+      if (phoneStrError) {
+        return { error: phoneStrError, proper: null }
       }
 
-      if (typeof phoneNumber !== 'string') {
-        return { error: invalidFieldError(fieldName), moderated: null }
+      if (!isRequired && !properString) {
+        return { error: null, proper: null }
       }
 
-      if (!isMobilePhone(phoneNumber)) {
-        return { error: invalidFieldError(fieldName), moderated: null }
+      if (!isMobilePhone(properString)) {
+        return { error: invalidFieldError(fieldName), proper: null }
       }
 
-      return { error: null, moderated: phoneNumber }
+      return { error: null, proper: properString }
     }
   }
 }

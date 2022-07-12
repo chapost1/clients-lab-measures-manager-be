@@ -1,13 +1,18 @@
-const { invalidFieldError, missingRequiredFieldError } = require('../errors')
+const { invalidFieldError, missingRequiredFieldError, emptyFieldError } = require('../errors')
 const makeMakeValidateMobilePhone = require('./validate-mobile-phone')
+const makeMakeValidateStringInput = require('./validate-string-input')
 const isMobilePhone = require('./is-mobile-phone')
 const { ValueError } = require('../../common/custom-error-types')
+const htmlSanitizer = require('../html-sanitizer')
 
 const fieldName = 'testFieldName'
 
 describe('validateMobilePhone', () => {
-  const makeValidateMobilePhone = makeMakeValidateMobilePhone({ missingRequiredFieldError, invalidFieldError })
-  const validateMobilePhone = makeValidateMobilePhone({ isMobilePhone })
+  const makeValidateStringInput = makeMakeValidateStringInput({ missingRequiredFieldError, invalidFieldError, emptyFieldError })
+  const validateStringInput = makeValidateStringInput({ sanitizer: htmlSanitizer })
+
+  const makeValidateMobilePhone = makeMakeValidateMobilePhone({ invalidFieldError })
+  const validateMobilePhone = makeValidateMobilePhone({ isMobilePhone, validateStringInput })
 
   it('should return error if required field is missing', () => {
     const response = validateMobilePhone({ phoneNumber: null, fieldName, isRequired: true })
@@ -18,7 +23,7 @@ describe('validateMobilePhone', () => {
   it('should not return error, if field is not required and missing', () => {
     const response = validateMobilePhone({ phoneNumber: null, fieldName, isRequired: false })
     expect(response.error).toBeNull()
-    expect(response.moderated).toBeNull()
+    expect(response.proper).toBeNull()
   })
 
   it('should return error if not phoneNumber (integer)', () => {
@@ -44,10 +49,10 @@ describe('validateMobilePhone', () => {
     expect(response.error).toBeNull()
   })
 
-  it('should return moderated date if string as bool', () => {
+  it('should return proper date if string as bool', () => {
     const phoneNumber = '+972592013982'
     const response = validateMobilePhone({ phoneNumber, fieldName, isRequired: true })
     expect(response.error).toBeNull()
-    expect(response.moderated).toBe(phoneNumber)
+    expect(response.proper).toBe(phoneNumber)
   })
 })

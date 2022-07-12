@@ -1,11 +1,11 @@
 module.exports = function makeDeleteMeasure ({ measuresDb, validatePositiveInteger, NotFoundError, ValueError }) {
   return function deleteMeasure (id, callback) {
-    const { error: idError, moderated: moderatedId } = validatePositiveInteger({ integer: id, fieldName: 'id', isRequired: true })
+    const { error: idError, proper: properId } = validatePositiveInteger({ integer: id, fieldName: 'id', isRequired: true })
     if (idError) {
       return callback(new ValueError(idError.message))
     }
 
-    measuresDb.findById(moderatedId, postFindById)
+    measuresDb.findById(properId, postFindById)
 
     function postFindById (err, foundMeasure) {
       if (err) {

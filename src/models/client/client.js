@@ -16,66 +16,49 @@ module.exports = function buildMakeClient ({
     phoneNumber,
     address
   } = {}) {
-    const { error: nameError, moderated: moderatedName } =
+    const { error: nameError, proper: properName } =
       validateStringInput({ string: name, fieldName: 'name', isRequired: true })
     if (nameError) {
       return { error: nameError, data: null }
     }
 
-    const { error: birthDateError, moderated: moderatedBirthDateAsString } =
-      validateStringInput({ string: birthDate, fieldName: 'birthDate', isRequired: true })
-    if (birthDateError) {
-      return { error: birthDateError, data: null }
+    const { error: dateError, proper: properBirthDate } =
+    validateDate({ date: birthDate, fieldName: 'birthDate', isRequired: true })
+    if (dateError) {
+      return { error: dateError, data: null }
     }
 
-    const { error: emailStrError, moderated: moderatedEmailAsString } =
-      validateStringInput({ string: email, fieldName: 'email', isRequired: true })
-    if (emailStrError) {
-      return { error: emailStrError, data: null }
+    const { error: emailError, proper: properEmail } =
+    validateEmail({ email, fieldName: 'email', isRequired: true })
+    if (emailError) {
+      return { error: emailError, data: null }
     }
 
-    const { error: phoneNumberStrError, moderated: moderatedPhoneNumberAsString } =
-    validateStringInput({ string: phoneNumber, fieldName: 'phoneNumber', isRequired: true })
-    if (phoneNumberStrError) {
-      return { error: phoneNumberStrError, data: null }
+    const { error: phoneNumberError, proper: properPhoneNumber } =
+    validateMobilePhone({ phoneNumber, fieldName: 'phoneNumber', isRequired: true })
+    if (phoneNumberError) {
+      return { error: phoneNumberError, data: null }
     }
 
-    const { error: addressError, moderated: moderatedAddress } =
+    const { error: addressError, proper: properAddress } =
       validateStringInput({ string: address, fieldName: 'address', isRequired: true })
     if (addressError) {
       return { error: addressError, data: null }
     }
 
-    const { error: sexIdError, moderated: moderatedSexId } =
+    const { error: sexIdError, proper: properSexId } =
       validatePositiveInteger({ integer: sexId, fieldName: 'sexId', isRequired: true })
     if (sexIdError) {
       return { error: sexIdError, data: null }
     }
 
-    const { error: idError, moderated: moderatedId } = validatePositiveInteger({ integer: id, fieldName: 'id', isRequired: false })
+    const { error: idError, proper: properId } =
+    validatePositiveInteger({ integer: id, fieldName: 'id', isRequired: false })
     if (idError) {
-      return { error: idError, data: moderatedId }
+      return { error: idError, data: properId }
     }
 
-    const { error: emailError, moderated: moderatedEmail } =
-    validateEmail({ email: moderatedEmailAsString, fieldName: 'email', isRequired: true })
-    if (emailError) {
-      return { error: emailError, data: null }
-    }
-
-    const { error: dateError, moderated: moderatedBirthDate } =
-    validateDate({ date: moderatedBirthDateAsString, fieldName: 'birthDate', isRequired: true })
-    if (dateError) {
-      return { error: dateError, data: null }
-    }
-
-    const { error: phoneNumberError, moderated: moderatedPhoneNumber } =
-    validateMobilePhone({ phoneNumber: moderatedPhoneNumberAsString, fieldName: 'phoneNumber', isRequired: true })
-    if (phoneNumberError) {
-      return { error: phoneNumberError, data: null }
-    }
-
-    const { error: isActiveError, moderated: moderatedIsActive } =
+    const { error: isActiveError, proper: properIsActive } =
     validateBoolean({ bool: isActive, fieldName: 'isActive', isRequired: true })
     if (isActiveError) {
       return { error: isActiveError, data: null }
@@ -84,14 +67,14 @@ module.exports = function buildMakeClient ({
     return {
       error: null,
       data: Object.freeze({
-        id: moderatedId,
-        name: moderatedName,
-        birthDate: moderatedBirthDate,
-        isActive: moderatedIsActive,
-        sexId: moderatedSexId,
-        email: moderatedEmail,
-        address: moderatedAddress,
-        phoneNumber: moderatedPhoneNumber
+        id: properId,
+        name: properName,
+        birthDate: properBirthDate,
+        isActive: properIsActive,
+        sexId: properSexId,
+        email: properEmail,
+        address: properAddress,
+        phoneNumber: properPhoneNumber
       })
     }
   }

@@ -1,11 +1,11 @@
 module.exports = function makeGetMeasureCategory ({ measuresCategoriesDb, validatePositiveInteger, NotFoundError, ValueError }) {
   return function getMeasureCategory (id, callback) {
-    const { error: idError, moderated: moderatedId } = validatePositiveInteger({ integer: id, fieldName: 'id', isRequired: true })
+    const { error: idError, proper: properId } = validatePositiveInteger({ integer: id, fieldName: 'id', isRequired: true })
     if (idError) {
       return callback(new ValueError(idError.message))
     }
 
-    measuresCategoriesDb.findById(moderatedId, postFindById)
+    measuresCategoriesDb.findById(properId, postFindById)
 
     function postFindById (err, foundMeasureCategory) {
       if (err) {

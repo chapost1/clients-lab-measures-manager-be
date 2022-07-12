@@ -3,13 +3,13 @@ module.exports = function buildMeasureCategory ({ validatePositiveInteger, valid
     name,
     id = null
   } = {}) {
-    const { error: nameError, moderated: moderatedName } =
+    const { error: nameError, proper: properName } =
     validateStringInput({ string: name, fieldName: 'name', isRequired: true })
     if (nameError) {
       return { error: nameError, data: null }
     }
 
-    const { error: idError, moderated: moderatedId } =
+    const { error: idError, proper: properId } =
     validatePositiveInteger({ integer: id, fieldName: 'id', isRequired: false })
     if (idError) {
       return { error: idError, data: null }
@@ -18,8 +18,8 @@ module.exports = function buildMeasureCategory ({ validatePositiveInteger, valid
     return {
       error: null,
       data: Object.freeze({
-        name: moderatedName,
-        id: moderatedId
+        name: properName,
+        id: properId
       })
     }
   }

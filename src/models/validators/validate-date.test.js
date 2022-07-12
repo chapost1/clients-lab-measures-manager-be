@@ -1,13 +1,18 @@
-const { invalidFieldError, missingRequiredFieldError } = require('../errors')
+const { invalidFieldError, missingRequiredFieldError, emptyFieldError } = require('../errors')
 const makeMakeValidateDate = require('./validate-date')
 const isDate = require('validator/lib/isDate')
+const makeMakeValidateStringInput = require('./validate-string-input')
 const { ValueError } = require('../../common/custom-error-types')
+const htmlSanitizer = require('../html-sanitizer')
 
 const fieldName = 'testFieldName'
 
 describe('validateDate', () => {
-  const makeValidateDate = makeMakeValidateDate({ missingRequiredFieldError, invalidFieldError })
-  const validateDate = makeValidateDate({ isDate })
+  const makeValidateStringInput = makeMakeValidateStringInput({ missingRequiredFieldError, invalidFieldError, emptyFieldError })
+  const validateStringInput = makeValidateStringInput({ sanitizer: htmlSanitizer })
+
+  const makeValidateDate = makeMakeValidateDate({ invalidFieldError })
+  const validateDate = makeValidateDate({ isDate, validateStringInput })
 
   it('should return error if required field is missing', () => {
     const response = validateDate({ date: null, fieldName, isRequired: true })
@@ -18,7 +23,7 @@ describe('validateDate', () => {
   it('should not return error, if field is not required and missing', () => {
     const response = validateDate({ date: null, fieldName, isRequired: false })
     expect(response.error).toBeNull()
-    expect(response.moderated).toBeNull()
+    expect(response.proper).toBeNull()
   })
 
   it('should return error if not date (integer)', () => {
@@ -44,10 +49,10 @@ describe('validateDate', () => {
     expect(response.error).toBeNull()
   })
 
-  it('should return moderated date if string as bool', () => {
+  it('should return proper date if string as bool', () => {
     const date = '2011-12-08'
     const response = validateDate({ date, fieldName, isRequired: true })
     expect(response.error).toBeNull()
-    expect(response.moderated).toBe(date)
+    expect(response.proper).toBe(date)
   })
 })

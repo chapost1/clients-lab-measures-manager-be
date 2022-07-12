@@ -1,13 +1,17 @@
-const { invalidFieldError, missingRequiredFieldError } = require('../errors')
+const { invalidFieldError, missingRequiredFieldError, emptyFieldError } = require('../errors')
 const makeMakeValidateEmail = require('./validate-email')
 const isEmail = require('validator/lib/isEmail')
+const makeMakeValidateStringInput = require('./validate-string-input')
 const { ValueError } = require('../../common/custom-error-types')
+const htmlSanitizer = require('../html-sanitizer')
 
 const fieldName = 'testFieldName'
 
 describe('validateEmail', () => {
-  const makeValidateEmail = makeMakeValidateEmail({ missingRequiredFieldError, invalidFieldError })
-  const validateEmail = makeValidateEmail({ isEmail })
+  const makeValidateStringInput = makeMakeValidateStringInput({ missingRequiredFieldError, invalidFieldError, emptyFieldError })
+  const validateStringInput = makeValidateStringInput({ sanitizer: htmlSanitizer })
+  const makeValidateEmail = makeMakeValidateEmail({ invalidFieldError })
+  const validateEmail = makeValidateEmail({ isEmail, validateStringInput })
 
   it('should return error if required field is missing', () => {
     const response = validateEmail({ email: null, fieldName, isRequired: true })
@@ -18,7 +22,7 @@ describe('validateEmail', () => {
   it('should not return error, if field is not required and missing', () => {
     const response = validateEmail({ email: null, fieldName, isRequired: false })
     expect(response.error).toBeNull()
-    expect(response.moderated).toBeNull()
+    expect(response.proper).toBeNull()
   })
 
   it('should return error if not email (integer)', () => {
@@ -50,10 +54,10 @@ describe('validateEmail', () => {
     expect(response.error).toBeNull()
   })
 
-  it('should return moderated email if string as bool', () => {
+  it('should return proper email if string as bool', () => {
     const email = 'foo@bar.com'
     const response = validateEmail({ email, fieldName, isRequired: true })
     expect(response.error).toBeNull()
-    expect(response.moderated).toBe(email)
+    expect(response.proper).toBe(email)
   })
 })

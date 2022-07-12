@@ -1,24 +1,21 @@
-module.exports = function makeMakeValidateEmail ({ missingRequiredFieldError, invalidFieldError }) {
-  return function makeValidateEmail ({ isEmail }) {
+module.exports = function makeMakeValidateEmail ({ invalidFieldError }) {
+  return function makeValidateEmail ({ isEmail, validateStringInput }) {
     return function validateEmail ({ email, fieldName = 'email', isRequired = true } = {}) {
-      const isFound = email !== undefined && email !== null
-      if (!isFound) {
-        if (isRequired) {
-          return { error: missingRequiredFieldError(fieldName), moderated: null }
-        } else {
-          return { error: null, moderated: null }
-        }
+      const { error: emailStrError, proper: properString } =
+    validateStringInput({ string: email, fieldName, isRequired })
+      if (emailStrError) {
+        return { error: emailStrError, proper: null }
       }
 
-      if (typeof email !== 'string') {
-        return { error: invalidFieldError(fieldName), moderated: null }
+      if (!isRequired && !properString) {
+        return { error: null, proper: null }
       }
 
-      if (!isEmail(email)) {
-        return { error: invalidFieldError(fieldName), moderated: null }
+      if (!isEmail(properString)) {
+        return { error: invalidFieldError(fieldName), proper: null }
       }
 
-      return { error: null, moderated: email }
+      return { error: null, proper: properString }
     }
   }
 }

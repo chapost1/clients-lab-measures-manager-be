@@ -3,28 +3,28 @@ module.exports = function makeValidatePositiveInteger ({ invalidFieldError, miss
     const isFound = integer !== null && integer !== undefined
     if (!isFound) {
       if (isRequired) {
-        return { error: missingRequiredFieldError(fieldName), moderated: null }
+        return { error: missingRequiredFieldError(fieldName), proper: null }
       } else {
-        return { error: null, moderated: null }
+        return { error: null, proper: null }
       }
     }
 
     if (integer === 0) {
-      return { error: invalidFieldError(fieldName), moderated: null }
+      return { error: invalidFieldError(fieldName), proper: null }
     }
 
     integer = Number(integer)
 
     if (typeof integer !== 'number' || isNaN(integer)) {
-      return { error: invalidFieldError(fieldName), moderated: null }
+      return { error: invalidFieldError(fieldName), proper: null }
     }
 
     const isPositiveInt = Number.isInteger(integer) && integer > 0
 
     if (!isPositiveInt) {
-      return { error: invalidFieldError(fieldName), moderated: null }
+      return { error: invalidFieldError(fieldName), proper: null }
     }
 
-    return { error: null, moderated: integer }
+    return { error: null, proper: integer }
   }
 }

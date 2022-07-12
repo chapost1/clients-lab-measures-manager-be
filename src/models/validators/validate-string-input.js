@@ -4,25 +4,25 @@ module.exports = function makeMakeValidateStringInput ({ missingRequiredFieldErr
       const isFound = string !== null && string !== undefined
       if (!isFound) {
         if (isRequired) {
-          return { error: missingRequiredFieldError(fieldName), moderated: null }
+          return { error: missingRequiredFieldError(fieldName), proper: null }
         } else {
-          return { error: null, moderated: null }
+          return { error: null, proper: null }
         }
       }
 
       if (typeof string !== 'string') {
-        return { error: invalidFieldError(fieldName), moderated: null }
+        return { error: invalidFieldError(fieldName), proper: null }
       }
 
       if (string.length < 1) {
-        return { error: emptyFieldError(fieldName), moderated: null }
+        return { error: emptyFieldError(fieldName), proper: null }
       }
       const sanitized = sanitizer(string)
       if (sanitized.length < 1) {
-        return { error: invalidFieldError(fieldName), moderated: null }
+        return { error: invalidFieldError(fieldName), proper: null }
       }
 
-      return { error: null, moderated: sanitized }
+      return { error: null, proper: sanitized }
     }
   }
 }
