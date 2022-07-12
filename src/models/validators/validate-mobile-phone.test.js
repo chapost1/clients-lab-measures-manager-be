@@ -8,11 +8,22 @@ const htmlSanitizer = require('../html-sanitizer')
 const fieldName = 'testFieldName'
 
 describe('validateMobilePhone', () => {
+  let stringValidatorIsCalled = false
+
+  beforeEach(() => {
+    stringValidatorIsCalled = false
+  })
+
   const makeValidateStringInput = makeMakeValidateStringInput({ missingRequiredFieldError, invalidFieldError, emptyFieldError })
   const validateStringInput = makeValidateStringInput({ sanitizer: htmlSanitizer })
 
   const makeValidateMobilePhone = makeMakeValidateMobilePhone({ invalidFieldError })
-  const validateMobilePhone = makeValidateMobilePhone({ isMobilePhone, validateStringInput })
+
+  const spiedValidateStringInput = (...args) => {
+    stringValidatorIsCalled = true
+    return validateStringInput.call(this, ...args)
+  }
+  const validateMobilePhone = makeValidateMobilePhone({ isMobilePhone, validateStringInput: spiedValidateStringInput })
 
   it('should return error if required field is missing', () => {
     const response = validateMobilePhone({ phoneNumber: null, fieldName, isRequired: true })
@@ -54,5 +65,11 @@ describe('validateMobilePhone', () => {
     const response = validateMobilePhone({ phoneNumber, fieldName, isRequired: true })
     expect(response.error).toBeNull()
     expect(response.proper).toBe(phoneNumber)
+  })
+
+  it('should string validator to be called', () => {
+    const phoneNumber = '+972592013982'
+    validateMobilePhone({ phoneNumber, fieldName, isRequired: true })
+    expect(stringValidatorIsCalled).toBe(true)
   })
 })

@@ -8,12 +8,24 @@ const htmlSanitizer = require('../html-sanitizer')
 const fieldName = 'testFieldName'
 
 describe('validateDate', () => {
+  let stringValidatorIsCalled = false
+
+  beforeEach(() => {
+    stringValidatorIsCalled = false
+  })
+
   const makeValidateStringInput = makeMakeValidateStringInput({ missingRequiredFieldError, invalidFieldError, emptyFieldError })
   const validateStringInput = makeValidateStringInput({ sanitizer: htmlSanitizer })
 
   const makeValidateDate = makeMakeValidateDate({ invalidFieldError })
-  const validateDate = makeValidateDate({ isDate, validateStringInput })
 
+  const spiedValidateStringInput = (...args) => {
+    stringValidatorIsCalled = true
+    return validateStringInput.call(this, ...args)
+  }
+  const validateDate = makeValidateDate({ isDate, validateStringInput: spiedValidateStringInput })
+
+  console.log(stringValidatorIsCalled)
   it('should return error if required field is missing', () => {
     const response = validateDate({ date: null, fieldName, isRequired: true })
     expect(response.error).toBeInstanceOf(ValueError)
@@ -54,5 +66,11 @@ describe('validateDate', () => {
     const response = validateDate({ date, fieldName, isRequired: true })
     expect(response.error).toBeNull()
     expect(response.proper).toBe(date)
+  })
+
+  it('should string validator to be called', () => {
+    const date = '2011-12-08'
+    validateDate({ date, fieldName, isRequired: true })
+    expect(stringValidatorIsCalled).toBe(true)
   })
 })

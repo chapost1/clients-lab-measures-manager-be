@@ -8,10 +8,21 @@ const htmlSanitizer = require('../html-sanitizer')
 const fieldName = 'testFieldName'
 
 describe('validateEmail', () => {
+  let stringValidatorIsCalled = false
+
+  beforeEach(() => {
+    stringValidatorIsCalled = false
+  })
+
   const makeValidateStringInput = makeMakeValidateStringInput({ missingRequiredFieldError, invalidFieldError, emptyFieldError })
   const validateStringInput = makeValidateStringInput({ sanitizer: htmlSanitizer })
   const makeValidateEmail = makeMakeValidateEmail({ invalidFieldError })
-  const validateEmail = makeValidateEmail({ isEmail, validateStringInput })
+
+  const spiedValidateStringInput = (...args) => {
+    stringValidatorIsCalled = true
+    return validateStringInput.call(this, ...args)
+  }
+  const validateEmail = makeValidateEmail({ isEmail, validateStringInput: spiedValidateStringInput })
 
   it('should return error if required field is missing', () => {
     const response = validateEmail({ email: null, fieldName, isRequired: true })
@@ -59,5 +70,11 @@ describe('validateEmail', () => {
     const response = validateEmail({ email, fieldName, isRequired: true })
     expect(response.error).toBeNull()
     expect(response.proper).toBe(email)
+  })
+
+  it('should string validator to be called', () => {
+    const email = 'foo@bar.com'
+    validateEmail({ email, fieldName, isRequired: true })
+    expect(stringValidatorIsCalled).toBe(true)
   })
 })
