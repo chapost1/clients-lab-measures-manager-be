@@ -29,6 +29,7 @@ describe('makeClient', () => {
       const mock = getMockClient()
       const { data: actual } = makeClient(mock)
       const expected = mock
+      delete expected.sex.name// no name relation types names in constructors
       expect(actual).toMatchObject(expected)
     })
 
@@ -37,91 +38,119 @@ describe('makeClient', () => {
       mock.id = 1
       const { data: actual } = makeClient(mock)
       const expected = mock
+      delete expected.sex.name// no name relation types names in constructors
       expect(actual).toMatchObject(expected)
     })
   })
 
   for (const fieldConf of [
-    { field: 'name', validText: 'text' },
-    { field: 'address', validText: 'text' },
-    { field: 'phoneNumber', validText: getMockClient().phoneNumber },
-    { field: 'email', validText: getMockClient().email }
+    { field: 'name', validText: 'text', parentField: null },
+    { field: 'address', validText: 'text', parentField: 'contact' },
+    { field: 'phoneNumber', validText: getMockClient().contact.phoneNumber, parentField: 'contact' },
+    { field: 'email', validText: getMockClient().contact.email, parentField: 'contact' }
   ]) {
     const field = fieldConf.field
+    const parentField = fieldConf.parentField
+    const fieldErrorIdentifier = parentField ? `${parentField}.${field}` : field
     describe(`${field} field`, () => {
-      it(`should return error if ${field} is missing`, () => {
+      if (parentField) {
+        it(`should return error if ${parentField} is missing`, () => {
+          const mock = getMockClient()
+          delete mock[parentField]
+          const { error } = makeClient(mock)
+          expect(error).toMatchObject(missingRequiredFieldError(parentField))
+        })
+      }
+
+      const getParentFieldOfCandidate = (client) => {
+        if (parentField) {
+          return client[parentField]
+        } else {
+          return client
+        }
+      }
+
+      it(`should return error if ${fieldErrorIdentifier} is missing`, () => {
         const mock = getMockClient()
-        delete mock[field]
+        delete getParentFieldOfCandidate(mock)[field]
         const { error } = makeClient(mock)
-        expect(error).toMatchObject(missingRequiredFieldError(field))
+        expect(error).toMatchObject(missingRequiredFieldError(fieldErrorIdentifier))
       })
 
-      it(`should return error if ${field} is not a string`, () => {
+      it(`should return error if ${fieldErrorIdentifier} is not a string`, () => {
         const mock = getMockClient()
-        mock[field] = 1
+        getParentFieldOfCandidate(mock)[field] = 1
         const { error } = makeClient(mock)
-        expect(error).toMatchObject(invalidFieldError(field))
+        expect(error).toMatchObject(invalidFieldError(fieldErrorIdentifier))
       })
 
-      it(`should return error if ${field} length is 0`, () => {
+      it(`should return error if ${fieldErrorIdentifier} length is 0`, () => {
         const mock = getMockClient()
-        mock[field] = ''
+        getParentFieldOfCandidate(mock)[field] = ''
         const { error } = makeClient(mock)
-        expect(error).toMatchObject(emptyFieldError(field))
+        expect(error).toMatchObject(emptyFieldError(fieldErrorIdentifier))
       })
 
-      it(`should return error if ${field} is html tag`, () => {
+      it(`should return error if ${fieldErrorIdentifier} is html tag`, () => {
         const mock = getMockClient()
-        mock[field] = '<div></div>'
+        getParentFieldOfCandidate(mock)[field] = '<div></div>'
         const { error } = makeClient(mock)
-        expect(error).toMatchObject(invalidFieldError(field))
+        expect(error).toMatchObject(invalidFieldError(fieldErrorIdentifier))
       })
 
-      it(`should escape html from ${field}`, () => {
+      it(`should escape html from ${fieldErrorIdentifier}`, () => {
         const validText = fieldConf.validText
         const mock = getMockClient()
-        mock[field] = `<div>${validText}</div>`
+        getParentFieldOfCandidate(mock)[field] = `<div>${validText}</div>`
         const { data: client } = makeClient(mock)
-        expect(client[field]).toBe(validText)
+        expect(getParentFieldOfCandidate(client)[field]).toBe(validText)
       })
 
-      it(`should escape script html tags from ${field}`, () => {
+      it(`should escape script html tags from ${fieldErrorIdentifier}`, () => {
         const validText = fieldConf.validText
         const mock = getMockClient()
-        mock[field] = `<script>alert('nasty security attack')</script>${validText}`
+        getParentFieldOfCandidate(mock)[field] =
+         `<script>alert('nasty security attack')</script>${validText}`
         const { data: client } = makeClient(mock)
-        expect(client[field]).toBe(validText)
+        expect(getParentFieldOfCandidate(client)[field]).toBe(validText)
       })
     })
   }
 
-  describe('sexId field', () => {
-    it('should return error if missing', () => {
+  describe('sex.id field', () => {
+    it('should return error if sex field is missing', () => {
       const mock = getMockClient()
-      delete mock.sexId
+      delete mock.sex
       const { error } = makeClient(mock)
-      expect(error).toMatchObject(missingRequiredFieldError('sexId'))
+      expect(error).toMatchObject(missingRequiredFieldError('sex'))
+    })
+
+    it('should return error if sex.id is missing', () => {
+      const mock = getMockClient()
+      delete mock.sex.id
+      const { error } = makeClient(mock)
+      expect(error).toMatchObject(missingRequiredFieldError('sex.id'))
     })
 
     it('should return error if not a number', () => {
       const mock = getMockClient()
-      mock.sexId = 'dummy'
+      mock.sex.id = 'dummy'
       const { error } = makeClient(mock)
-      expect(error).toMatchObject(invalidFieldError('sexId'))
+      expect(error).toMatchObject(invalidFieldError('sex.id'))
     })
 
     it('should return error if negative', () => {
       const mock = getMockClient()
-      mock.sexId = -2
+      mock.sex.id = -2
       const { error } = makeClient(mock)
-      expect(error).toMatchObject(invalidFieldError('sexId'))
+      expect(error).toMatchObject(invalidFieldError('sex.id'))
     })
 
     it('should return error if float', () => {
       const mock = getMockClient()
-      mock.sexId = 2.1
+      mock.sex.id = 2.1
       const { error } = makeClient(mock)
-      expect(error).toMatchObject(invalidFieldError('sexId'))
+      expect(error).toMatchObject(invalidFieldError('sex.id'))
     })
   })
 
@@ -162,47 +191,47 @@ describe('makeClient', () => {
     })
   })
 
-  describe('email field', () => {
-    it('should return error if email is missing', () => {
+  describe('contact.email field', () => {
+    it('should return error if contact.email is missing', () => {
       const mock = getMockClient()
-      delete mock.email
+      delete mock.contact.email
       const { error } = makeClient(mock)
-      expect(error).toMatchObject(missingRequiredFieldError('email'))
+      expect(error).toMatchObject(missingRequiredFieldError('contact.email'))
     })
 
     it('should return error if email is not a string', () => {
       const mock = getMockClient()
-      mock.email = 1
+      mock.contact.email = 1
       const { error } = makeClient(mock)
-      expect(error).toMatchObject(invalidFieldError('email'))
+      expect(error).toMatchObject(invalidFieldError('contact.email'))
     })
 
     it('should return error if email length is 0', () => {
       const mock = getMockClient()
-      mock.email = ''
+      mock.contact.email = ''
       const { error } = makeClient(mock)
-      expect(error).toMatchObject(emptyFieldError('email'))
+      expect(error).toMatchObject(emptyFieldError('contact.email'))
     })
 
     it('should return error if email string is is html tag', () => {
       const mock = getMockClient()
-      mock.email = '<div></div>'
+      mock.contact.email = '<div></div>'
       const { error } = makeClient(mock)
-      expect(error).toMatchObject(invalidFieldError('email'))
+      expect(error).toMatchObject(invalidFieldError('contact.email'))
     })
 
     it('should return error if email string is not an email', () => {
       const mock = getMockClient()
-      mock.email = 'blah'
+      mock.contact.email = 'blah'
       const { error } = makeClient(mock)
-      expect(error).toMatchObject(invalidFieldError('email'))
+      expect(error).toMatchObject(invalidFieldError('contact.email'))
     })
 
     it('should return error if email string is not an email', () => {
       const mock = getMockClient()
-      mock.email = 'blah@com'
+      mock.contact.email = 'blah@com'
       const { error } = makeClient(mock)
-      expect(error).toMatchObject(invalidFieldError('email'))
+      expect(error).toMatchObject(invalidFieldError('contact.email'))
     })
 
     it('should not return error if email is valid', () => {
@@ -212,33 +241,33 @@ describe('makeClient', () => {
     })
   })
 
-  describe('phoneNumber field', () => {
+  describe('contact.phoneNumber field', () => {
     it('should return phoneNumber if email is missing', () => {
       const mock = getMockClient()
-      delete mock.phoneNumber
+      delete mock.contact.phoneNumber
       const { error } = makeClient(mock)
-      expect(error).toMatchObject(missingRequiredFieldError('phoneNumber'))
+      expect(error).toMatchObject(missingRequiredFieldError('contact.phoneNumber'))
     })
 
     it('should return error if phoneNumber is not a string', () => {
       const mock = getMockClient()
-      mock.phoneNumber = 1
+      mock.contact.phoneNumber = 1
       const { error } = makeClient(mock)
-      expect(error).toMatchObject(invalidFieldError('phoneNumber'))
+      expect(error).toMatchObject(invalidFieldError('contact.phoneNumber'))
     })
 
     it('should return error if phoneNumber string is not a phoneNumber', () => {
       const mock = getMockClient()
-      mock.phoneNumber = 'blah'
+      mock.contact.phoneNumber = 'blah'
       const { error } = makeClient(mock)
-      expect(error).toMatchObject(invalidFieldError('phoneNumber'))
+      expect(error).toMatchObject(invalidFieldError('contact.phoneNumber'))
     })
 
     it('should return error if phoneNumber string is not a phoneNumber', () => {
       const mock = getMockClient()
-      mock.phoneNumber = '34353'
+      mock.contact.phoneNumber = '34353'
       const { error } = makeClient(mock)
-      expect(error).toMatchObject(invalidFieldError('phoneNumber'))
+      expect(error).toMatchObject(invalidFieldError('contact.phoneNumber'))
     })
 
     it('should not return error if phoneNumber is valid', () => {

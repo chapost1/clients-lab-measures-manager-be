@@ -26,7 +26,7 @@ describe('addMeasure', () => {
   })
 
   it('should fail create model if no category id', done => {
-    addMeasure({ name: 'hello', valueTypeId: 1 }, (err, addedMesureId) => {
+    addMeasure({ name: 'hello', valueType: { id: 1 } }, (err, addedMesureId) => {
       try {
         expect(addedMesureId).toBeFalsy()
         expect(err).not.toBeFalsy()
@@ -52,7 +52,7 @@ describe('addMeasure', () => {
   })
 
   it('should fail create model if no name', done => {
-    addMeasure({ valueTypeId: 1, categoryId: 1 }, (err, addedMesureId) => {
+    addMeasure({ valueType: { id: 1 }, category: { id: 1 } }, (err, addedMesureId) => {
       try {
         expect(addedMesureId).toBeFalsy()
         expect(err).not.toBeFalsy()
@@ -66,7 +66,7 @@ describe('addMeasure', () => {
 
   it('should fail if category id does not exists', done => {
     // no categories have been inserted atm (assumption: before each -> clear all)
-    addMeasure({ name: 'some-valid-name', valueTypeId: 1, categoryId: 1 }, (err, addedMesureId) => {
+    addMeasure({ name: 'some-valid-name', valueType: { id: 1 }, category: { id: 1 } }, (err, addedMesureId) => {
       try {
         expect(addedMesureId).toBeFalsy()
         expect(err).not.toBeFalsy()
@@ -90,7 +90,7 @@ describe('addMeasure', () => {
 
       // value type id is designed to be some finite number as this is a behavioral value, so numerous value will never be exist on setup
       const invalidValueTypeId = 999999999
-      addMeasure({ name: 'some-valid-name', valueTypeId: invalidValueTypeId, categoryId: 1 }, postMeasureInsert)
+      addMeasure({ name: 'some-valid-name', valueType: { id: invalidValueTypeId }, category: { id: 1 } }, postMeasureInsert)
     }
 
     function postMeasureInsert (err, addedMeasureId) {
@@ -115,7 +115,7 @@ describe('addMeasure', () => {
         return done(err)
       }
 
-      addMeasure({ name: 'some-valid-name', valueTypeId: 1, categoryId: addedMeasureCategoryId }, postMeasureInsert)
+      addMeasure({ name: 'some-valid-name', valueType: { id: 1 }, category: { id: addedMeasureCategoryId } }, postMeasureInsert)
     }
 
     function postMeasureInsert (err, addedMeasureId) {

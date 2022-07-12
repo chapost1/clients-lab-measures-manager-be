@@ -4,9 +4,14 @@ module.exports = function getMockClient () {
     name: 'Roy Sabah',
     birthDate: '2011-08-04',
     isActive: true,
-    sexId: 1,
-    email: 'foo@bar.com',
-    phoneNumber: '+972569123449',
-    address: 'Modi\'in, Shmuel Hanavi 14'
+    sex: {
+      id: 1,
+      name: 'F'
+    },
+    contact: {
+      email: 'foo@bar.com',
+      phoneNumber: '+972569123449',
+      address: 'Modi\'in, Shmuel Hanavi 14'
+    }
   }
 }

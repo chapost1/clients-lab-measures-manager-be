@@ -17,12 +17,12 @@ describe('parseDbMeasure', () => {
 
   it('should return same category name (different field)', () => {
     const categoryName = 'category_name'
-    expect(parseDbMeasure({ category_name: categoryName }).categoryName).toBe(categoryName)
+    expect(parseDbMeasure({ category_name: categoryName }).category.name).toBe(categoryName)
   })
 
   it('should return same value type name (different field)', () => {
     const valueTypeName = 'value_type_name'
-    expect(parseDbMeasure({ value_type_name: valueTypeName }).valueTypeName).toBe(valueTypeName)
+    expect(parseDbMeasure({ value_type_name: valueTypeName }).valueType.name).toBe(valueTypeName)
   })
 
   describe('should not return any new field which has not been initially passed', () => {

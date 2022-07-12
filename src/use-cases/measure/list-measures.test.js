@@ -71,7 +71,7 @@ describe('listMeasures', () => {
         return done(error)
       }
 
-      mockMeasure.categoryId = addedMeasureCategoryId
+      mockMeasure.category.id = addedMeasureCategoryId
 
       insertMultiMeasures()
     }

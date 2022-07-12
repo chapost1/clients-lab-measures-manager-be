@@ -9,7 +9,7 @@ module.exports = function makeAddMeasure ({
       return callback(new ModelConstructionError(error.message))
     }
 
-    measuresValuesTypesDb.findById(measure.valueTypeId, postFindValueTypeById)
+    measuresValuesTypesDb.findById(measure.valueType.id, postFindValueTypeById)
 
     function postFindValueTypeById (err, valueType) {
       if (err) {
@@ -19,7 +19,7 @@ module.exports = function makeAddMeasure ({
         return callback(new InvalidRationalValueError('measure value type id does not exists'))
       }
 
-      measuresCategoriesDb.findById(measure.categoryId, postFindCategoryById)
+      measuresCategoriesDb.findById(measure.category.id, postFindCategoryById)
     }
 
     function postFindCategoryById (err, category) {

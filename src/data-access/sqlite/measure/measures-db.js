@@ -8,7 +8,9 @@ module.exports = function makeMeasuresDb ({ dbConnector, parseDbMeasure, errorHa
 
   function findById (id, callback) {
     const sql =
-    `SELECT measures.id, measures.name, measures_categories.name as category_name, measures_values_types.name as value_type_name
+    `SELECT measures.id, measures.name, measures.category_id, measures.value_type_id,
+            measures_categories.name as category_name,
+            measures_values_types.name as value_type_name
      FROM measures measures
      INNER JOIN measures_categories measures_categories ON (measures.category_id = measures_categories.id)
      INNER JOIN measures_values_types measures_values_types ON (measures.value_type_id = measures_values_types.id)
@@ -29,7 +31,9 @@ module.exports = function makeMeasuresDb ({ dbConnector, parseDbMeasure, errorHa
 
   function findAll (callback) {
     const sql =
-    `SELECT measures.id, measures.name, measures_categories.name as category_name, measures_values_types.name as value_type_name
+    `SELECT measures.id, measures.name, measures.category_id, measures.value_type_id,
+            measures_categories.name as category_name,
+            measures_values_types.name as value_type_name
      FROM measures measures
      INNER JOIN measures_categories measures_categories ON (measures.category_id = measures_categories.id)
      INNER JOIN measures_values_types measures_values_types ON (measures.value_type_id = measures_values_types.id)`
@@ -42,12 +46,12 @@ module.exports = function makeMeasuresDb ({ dbConnector, parseDbMeasure, errorHa
     })
   }
 
-  function insert ({ name, categoryId, valueTypeId } = {}, callback) {
+  function insert ({ name, category, valueType } = {}, callback) {
     const sql =
     `INSERT INTO measures (name, category_id, value_type_id)
     VALUES (?, ?, ?)`
 
-    dbConnector.insert(sql, [name, categoryId, valueTypeId], postInsert)
+    dbConnector.insert(sql, [name, category.id, valueType.id], postInsert)
     function postInsert (err, info) {
       if (err) {
         return callback(errorHandler(err))

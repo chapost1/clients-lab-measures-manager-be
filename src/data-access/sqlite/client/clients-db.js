@@ -11,7 +11,7 @@ module.exports = function makeClientsDb ({ dbConnector, parseDbClient, errorHand
     const sql =
       `SELECT clients.id, clients.name, clients.birth_date,
               clients.is_active, clients.email, clients.phone_number,
-              clients.address, sex.name as sex_name
+              clients.address, clients.sex_id, sex.name as sex_name
        FROM clients clients
        INNER JOIN sex sex ON (clients.sex_id = sex.id)
        WHERE clients.id = ?`
@@ -33,7 +33,7 @@ module.exports = function makeClientsDb ({ dbConnector, parseDbClient, errorHand
     const sql =
       `SELECT clients.id, clients.name, clients.birth_date,
       clients.is_active, clients.email, clients.phone_number,
-      clients.address, sex.name as sex_name
+      clients.address, clients.sex_id, sex.name as sex_name
       FROM clients clients
       INNER JOIN sex sex ON (clients.sex_id = sex.id)`
 
@@ -49,10 +49,8 @@ module.exports = function makeClientsDb ({ dbConnector, parseDbClient, errorHand
     name,
     birthDate,
     isActive,
-    sexId,
-    email,
-    phoneNumber,
-    address
+    sex,
+    contact
   } = {}, callback) {
     const sql =
       `INSERT INTO clients (name, birth_date, is_active, sex_id, email, phone_number, address)
@@ -60,7 +58,7 @@ module.exports = function makeClientsDb ({ dbConnector, parseDbClient, errorHand
 
     dbConnector.insert(
       sql,
-      [name, birthDate, isActive, sexId, email, phoneNumber, address],
+      [name, birthDate, isActive, sex.id, contact.email, contact.phoneNumber, contact.address],
       postInsert
     )
     function postInsert (err, info) {
@@ -76,10 +74,8 @@ module.exports = function makeClientsDb ({ dbConnector, parseDbClient, errorHand
     name,
     birthDate,
     isActive,
-    sexId,
-    email,
-    address,
-    phoneNumber
+    sex,
+    contact
   } = {}, callback) {
     const sql =
       `UPDATE clients
@@ -90,7 +86,7 @@ module.exports = function makeClientsDb ({ dbConnector, parseDbClient, errorHand
 
     dbConnector.execute(
       sql,
-      [name, birthDate, isActive, sexId, email, phoneNumber, address, id],
+      [name, birthDate, isActive, sex.id, contact.email, contact.phoneNumber, contact.address, id],
       callback
     )
   }

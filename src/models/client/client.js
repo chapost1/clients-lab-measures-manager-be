@@ -1,3 +1,5 @@
+const { missingRequiredFieldError } = require('../errors')
+
 module.exports = function buildMakeClient ({
   validatePositiveInteger,
   validateStringInput,
@@ -11,10 +13,8 @@ module.exports = function buildMakeClient ({
     name,
     birthDate,
     isActive,
-    sexId,
-    email,
-    phoneNumber,
-    address
+    sex,
+    contact
   } = {}) {
     const { error: nameError, proper: properName } =
       validateStringInput({ string: name, fieldName: 'name', isRequired: true })
@@ -28,26 +28,32 @@ module.exports = function buildMakeClient ({
       return { error: dateError, data: null }
     }
 
+    if (!contact && typeof contact !== 'object') {
+      return { error: missingRequiredFieldError('contact'), data: null }
+    }
     const { error: emailError, proper: properEmail } =
-    validateEmail({ email, fieldName: 'email', isRequired: true })
+    validateEmail({ email: contact.email, fieldName: 'contact.email', isRequired: true })
     if (emailError) {
       return { error: emailError, data: null }
     }
 
     const { error: phoneNumberError, proper: properPhoneNumber } =
-    validateMobilePhone({ phoneNumber, fieldName: 'phoneNumber', isRequired: true })
+    validateMobilePhone({ phoneNumber: contact.phoneNumber, fieldName: 'contact.phoneNumber', isRequired: true })
     if (phoneNumberError) {
       return { error: phoneNumberError, data: null }
     }
 
     const { error: addressError, proper: properAddress } =
-      validateStringInput({ string: address, fieldName: 'address', isRequired: true })
+      validateStringInput({ string: contact.address, fieldName: 'contact.address', isRequired: true })
     if (addressError) {
       return { error: addressError, data: null }
     }
 
+    if (!sex && typeof sex !== 'object') {
+      return { error: missingRequiredFieldError('sex'), data: null }
+    }
     const { error: sexIdError, proper: properSexId } =
-      validatePositiveInteger({ integer: sexId, fieldName: 'sexId', isRequired: true })
+      validatePositiveInteger({ integer: sex.id, fieldName: 'sex.id', isRequired: true })
     if (sexIdError) {
       return { error: sexIdError, data: null }
     }
@@ -71,10 +77,14 @@ module.exports = function buildMakeClient ({
         name: properName,
         birthDate: properBirthDate,
         isActive: properIsActive,
-        sexId: properSexId,
-        email: properEmail,
-        address: properAddress,
-        phoneNumber: properPhoneNumber
+        sex: {
+          id: properSexId
+        },
+        contact: {
+          email: properEmail,
+          address: properAddress,
+          phoneNumber: properPhoneNumber
+        }
       })
     }
   }
