@@ -1,4 +1,4 @@
-module.exports = function parseDbMeasure (source = {}) {
+module.exports = function parseDbClient (source = {}) {
   const client = {}
   if (source.id) {
     client.id = source.id
@@ -11,6 +11,8 @@ module.exports = function parseDbMeasure (source = {}) {
   }
   if (typeof source.is_active === 'boolean') {
     client.isActive = source.is_active
+  } else if (source.is_active === 0 || source.is_active === 1) {
+    client.isActive = Boolean(source.is_active)
   }
   if (source.sex_name) {
     client.sex = client.sex || {}
@@ -22,15 +24,15 @@ module.exports = function parseDbMeasure (source = {}) {
   }
   if (source.email) {
     client.contact = client.contact || {}
-    client.email = source.email
+    client.contact.email = source.email
   }
   if (source.phone_number) {
     client.contact = client.contact || {}
-    client.phoneNumber = source.phone_number
+    client.contact.phoneNumber = source.phone_number
   }
   if (source.address) {
     client.contact = client.contact || {}
-    client.address = source.address
+    client.contact.address = source.address
   }
   return client
 }

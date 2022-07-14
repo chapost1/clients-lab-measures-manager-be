@@ -58,7 +58,7 @@ module.exports = function makeClientsDb ({ dbConnector, parseDbClient, errorHand
 
     dbConnector.insert(
       sql,
-      [name, birthDate, isActive, sex.id, contact.email, contact.phoneNumber, contact.address],
+      [name, birthDate, Number(isActive), sex.id, contact.email, contact.phoneNumber, contact.address],
       postInsert
     )
     function postInsert (err, info) {
@@ -86,7 +86,7 @@ module.exports = function makeClientsDb ({ dbConnector, parseDbClient, errorHand
 
     dbConnector.execute(
       sql,
-      [name, birthDate, isActive, sex.id, contact.email, contact.phoneNumber, contact.address, id],
+      [name, birthDate, Number(isActive), sex.id, contact.email, contact.phoneNumber, contact.address, id],
       callback
     )
   }
