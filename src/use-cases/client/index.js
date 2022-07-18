@@ -4,6 +4,8 @@ const makeAddClient = require('./add-client')
 const makeDeleteClient = require('./delete-client')
 const makeGetClient = require('./get-client')
 const makeListClients = require('./list-clients')
+const makeUpdateClient = require('./update-client')
+const unionModel = require('../../models/union-model')
 const { validatePositiveInteger } = require('../../models/validators')
 const { ModelConstructionError, NotFoundError, InvalidRationalValueError, ValueError } = require('../../common/custom-error-types')
 
@@ -11,10 +13,12 @@ const addClient = makeAddClient({ clientsDb, sexTypesDb, ModelConstructionError,
 const deleteClient = makeDeleteClient({ clientsDb, validatePositiveInteger, NotFoundError, ValueError })
 const getClient = makeGetClient({ clientsDb, validatePositiveInteger, NotFoundError, ValueError })
 const listClients = makeListClients({ clientsDb })
+const updateClient = makeUpdateClient({ clientsDb, sexTypesDb, validatePositiveInteger, InvalidRationalValueError, NotFoundError, ValueError, unionModel })
 
 module.exports = Object.freeze({
   addClient,
   deleteClient,
   getClient,
-  listClients
+  listClients,
+  updateClient
 })
