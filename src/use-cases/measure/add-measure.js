@@ -1,4 +1,8 @@
 const makeMeasure = require('../../models/measure/index')
+const {
+  MEASURE_CATEGORY,
+  MEASURE_VALUE_TYPE
+} = require('../../models/models-types')
 
 module.exports = function makeAddMeasure ({
   measuresDb, measuresCategoriesDb, measuresValuesTypesDb, ModelConstructionError, InvalidRationalValueError
@@ -16,7 +20,7 @@ module.exports = function makeAddMeasure ({
         return callback(err)
       }
       if (!valueType) {
-        return callback(new InvalidRationalValueError('measure value type id does not exists'))
+        return callback(new InvalidRationalValueError(`${MEASURE_VALUE_TYPE} id does not exists`))
       }
 
       measuresCategoriesDb.findById(measure.category.id, postFindCategoryById)
@@ -27,7 +31,7 @@ module.exports = function makeAddMeasure ({
         return callback(err)
       }
       if (!category) {
-        return callback(new InvalidRationalValueError('measure category id does not exists'))
+        return callback(new InvalidRationalValueError(`${MEASURE_CATEGORY} id does not exists`))
       }
 
       measuresDb.insert(measure, postAddMeasure)

@@ -11,9 +11,9 @@ module.exports = function makeClientsDb ({ dbConnector, parseDbClient, errorHand
     const sql =
       `SELECT clients.id, clients.name, clients.birth_date,
               clients.is_active, clients.email, clients.phone_number,
-              clients.address, clients.sex_id, sex.name as sex_name
+              clients.address, clients.sex_id, sex_types.name as sex_name
        FROM clients clients
-       INNER JOIN sex sex ON (clients.sex_id = sex.id)
+       INNER JOIN sex_types sex_types ON (clients.sex_id = sex_types.id)
        WHERE clients.id = ?`
 
     dbConnector.getSingle(sql, [id], (err, client) => {
@@ -33,9 +33,9 @@ module.exports = function makeClientsDb ({ dbConnector, parseDbClient, errorHand
     const sql =
       `SELECT clients.id, clients.name, clients.birth_date,
       clients.is_active, clients.email, clients.phone_number,
-      clients.address, clients.sex_id, sex.name as sex_name
+      clients.address, clients.sex_id, sex_types.name as sex_name
       FROM clients clients
-      INNER JOIN sex sex ON (clients.sex_id = sex.id)`
+      INNER JOIN sex_types sex_types ON (clients.sex_id = sex_types.id)`
 
     dbConnector.getMulti(sql, [], (err, clients) => {
       if (err) {

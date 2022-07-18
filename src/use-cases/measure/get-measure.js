@@ -1,3 +1,5 @@
+const { MEASURE } = require('../../models/models-types')
+
 module.exports = function makeGetMeasure ({ measuresDb, validatePositiveInteger, NotFoundError, ValueError }) {
   return function getMeasure (id, callback) {
     const { error: idError, proper: properId } = validatePositiveInteger({ integer: id, fieldName: 'id', isRequired: true })
@@ -11,7 +13,7 @@ module.exports = function makeGetMeasure ({ measuresDb, validatePositiveInteger,
       if (err) {
         return callback(err)
       } else if (!foundMeasure) {
-        return callback(new NotFoundError('measure with the selected id can not be found'))
+        return callback(new NotFoundError(`${MEASURE} with the selected id can not be found`))
       } else {
         return callback(null, foundMeasure)
       }

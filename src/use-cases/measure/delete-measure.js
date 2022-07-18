@@ -1,3 +1,5 @@
+const { MEASURE } = require('../../models/models-types')
+
 module.exports = function makeDeleteMeasure ({ measuresDb, validatePositiveInteger, NotFoundError, ValueError }) {
   return function deleteMeasure (id, callback) {
     const { error: idError, proper: properId } = validatePositiveInteger({ integer: id, fieldName: 'id', isRequired: true })
@@ -11,7 +13,7 @@ module.exports = function makeDeleteMeasure ({ measuresDb, validatePositiveInteg
       if (err) {
         return callback(err)
       } else if (!foundMeasure) {
-        return callback(new NotFoundError('measure with the selected id can not be found'))
+        return callback(new NotFoundError(`${MEASURE} with the selected id can not be found`))
       } else {
         measuresDb.deleteById(id, postDeleteById)
       }

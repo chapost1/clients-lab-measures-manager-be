@@ -1,6 +1,6 @@
 const { makeDbConnector, closeDbConnections } = require('../../src/data-access/sqlite/index')
 const { MEASURES_VALUES_TYPES } = require('../../src/models/measure-value-type/measures-values-types')
-const { SEX_TYPES } = require('../../src/models/sex/sex-types')
+const { SEX_TYPES } = require('../../src/models/sex-type/sex-types')
 const async = require('async')
 
 function setupDefaultData ({ dbPath } = { }, mainCallback) {
@@ -60,7 +60,7 @@ function addSexTypes (db, callback) {
     return callback(null)
   }
   const sql =
-    `INSERT INTO sex (name)
+    `INSERT INTO sex_types (name)
      VALUES ${Array(params.length).fill('(?)').join(', ')}`
   try {
     const stmt = db.prepare(sql)

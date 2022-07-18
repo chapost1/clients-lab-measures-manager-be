@@ -131,7 +131,7 @@ function createTriggerToDeleteMeasureOnItsValueTypeDelete (db, callback) {
 function createSexTable (db, callback) {
   console.log('createSexTable')
   const sql =
-    `CREATE TABLE sex (
+    `CREATE TABLE sex_types (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL UNIQUE
       )`
@@ -153,7 +153,7 @@ function createMeasuresNormTable (db, callback) {
             ON DELETE CASCADE 
             ON UPDATE NO ACTION,
         FOREIGN KEY (sex_id)
-          REFERENCES sex (id) 
+          REFERENCES sex_types (id) 
             ON DELETE CASCADE 
             ON UPDATE NO ACTION
       )`
@@ -177,7 +177,7 @@ function createTriggerToDeleteMeasureNormOnItsSexDelete (db, callback) {
   console.log('createTriggerToDeleteMeasureNormOnItsSexDelete')
   const sql =
       `CREATE trigger delete_measures_norm_with_its_sex_deleted_trigger
-       BEFORE DELETE ON sex
+       BEFORE DELETE ON sex_types
        FOR EACH ROW
        BEGIN
           DELETE FROM measures_norms
@@ -199,7 +199,7 @@ function createClientsTable (db, callback) {
         phone_number TEXT,
         address TEXT,
         FOREIGN KEY (sex_id)
-          REFERENCES sex (id) 
+          REFERENCES sex_types (id) 
             ON DELETE CASCADE 
             ON UPDATE NO ACTION
       )`
