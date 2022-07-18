@@ -13,7 +13,7 @@ const addClient = makeAddClient({ clientsDb, sexTypesDb, ModelConstructionError,
 const deleteClient = makeDeleteClient({ clientsDb, validatePositiveInteger, NotFoundError, ValueError })
 const getClient = makeGetClient({ clientsDb, validatePositiveInteger, NotFoundError, ValueError })
 const listClients = makeListClients({ clientsDb })
-const updateClient = makeUpdateClient({ clientsDb, sexTypesDb, validatePositiveInteger, InvalidRationalValueError, NotFoundError, ValueError, unionModel })
+const updateClient = makeUpdateClient({ clientsDb, sexTypesDb, validatePositiveInteger, ModelConstructionError, InvalidRationalValueError, NotFoundError, ValueError, unionModel })
 
 module.exports = Object.freeze({
   addClient,

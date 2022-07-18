@@ -1,3 +1,4 @@
+const makeClient = require('../../models/client/index')
 const { CLIENT, SEX_TYPE } = require('../../models/models-types')
 
 module.exports = function makeUpdateClient ({
@@ -6,6 +7,7 @@ module.exports = function makeUpdateClient ({
   unionModel,
   validatePositiveInteger,
   InvalidRationalValueError,
+  ModelConstructionError,
   NotFoundError,
   ValueError
 }) {
@@ -40,11 +42,16 @@ module.exports = function makeUpdateClient ({
       } else if (!foundClient) {
         return callback(new NotFoundError(`${CLIENT} with the selected id can not be found`))
       } else {
-        const client = unionModel({
+        const newClientInfo = unionModel({
           currentState: foundClient,
           newState: clientInfo,
           idOverwrite: properId
         })
+
+        const { error, data: client } = makeClient(newClientInfo)
+        if (error) {
+          return callback(new ModelConstructionError(error.message))
+        }
 
         clientsDb.update(client, postUpdate)
       }
