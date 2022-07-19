@@ -7,8 +7,8 @@ const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlit
 const errorHandler = require('../../data-access/sqlite/error-handler/index')
 const async = require('async')
 const parseDbClient = require('../../data-access/sqlite/client/parse-db-client')
-const getMockClient = require('../../models/client/fixture')
-const { ModelConstructionError, InvalidRationalValueError } = require('../../common/custom-error-types')
+const getMockClient = require('../../entities/client/fixture')
+const { EntityConstructionError, InvalidRationalValueError } = require('../../common/custom-error-types')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
@@ -18,7 +18,7 @@ describe('listClients', () => {
   const clientsDb = makeClientsDb({ dbConnector, parseDbClient, errorHandler })
   const sexTypesDb = makeSexTypesDb({ dbConnector, errorHandler })
 
-  const addClient = makeAddClient({ clientsDb, sexTypesDb, ModelConstructionError, InvalidRationalValueError })
+  const addClient = makeAddClient({ clientsDb, sexTypesDb, EntityConstructionError, InvalidRationalValueError })
   const listClients = makeListClients({ clientsDb })
 
   beforeEach(done => {

@@ -1,6 +1,6 @@
 const { makeDbConnector, closeDbConnections } = require('../../src/data-access/sqlite/index')
-const { MEASURES_VALUES_TYPES } = require('../../src/models/measure-value-type/measures-values-types')
-const { SEX_TYPES } = require('../../src/models/sex-type/sex-types')
+const { MEASURES_VALUES_TYPES } = require('../../src/entities/measure-value-type/measures-values-types')
+const { SEX_TYPES } = require('../../src/entities/sex-type/sex-types')
 const async = require('async')
 
 function setupDefaultData ({ dbPath } = { }, mainCallback) {

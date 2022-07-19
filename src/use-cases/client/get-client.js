@@ -1,4 +1,4 @@
-const { CLIENT } = require('../../models/models-types')
+const { CLIENT } = require('../../entities/entities-types')
 
 module.exports = function makeGetClient ({ clientsDb, validatePositiveInteger, NotFoundError, ValueError }) {
   return function getClient (id, callback) {

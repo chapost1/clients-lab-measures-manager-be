@@ -1,4 +1,4 @@
-const { MEASURE } = require('../../models/models-types')
+const { MEASURE } = require('../../entities/entities-types')
 
 module.exports = function makeDeleteMeasure ({ measuresDb, validatePositiveInteger, NotFoundError, ValueError }) {
   return function deleteMeasure (id, callback) {

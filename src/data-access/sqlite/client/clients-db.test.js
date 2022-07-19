@@ -1,11 +1,11 @@
-const { validatePositiveInteger } = require('../../../models/validators')
+const { validatePositiveInteger } = require('../../../entities/validators')
 const resetDatabase = require('../../../../db/sqlite/index')
 const makeClientsDb = require('./clients-db')
 const { makeDbConnector, closeDbConnections } = require('../index')
 const async = require('async')
 const parseDbClient = require('./parse-db-client')
 const errorHandler = require('../error-handler/index')
-const getMockClient = require('../../../models/client/fixture')
+const getMockClient = require('../../../entities/client/fixture')
 const { DbApplicationError } = require('../../../common/custom-error-types')
 
 const dbPath = process.env.SQLITE_DB_PATH

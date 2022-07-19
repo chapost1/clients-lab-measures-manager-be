@@ -1,4 +1,4 @@
-const { MEASURE_CATEGORY } = require('../../models/models-types')
+const { MEASURE_CATEGORY } = require('../../entities/entities-types')
 
 module.exports = function makeGetMeasureCategory ({ measuresCategoriesDb, validatePositiveInteger, NotFoundError, ValueError }) {
   return function getMeasureCategory (id, callback) {

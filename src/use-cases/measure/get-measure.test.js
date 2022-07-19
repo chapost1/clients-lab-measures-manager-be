@@ -5,12 +5,12 @@ const makeMeasuresCategoriesDb = require('../../data-access/sqlite/measure-categ
 const makeGetMeasure = require('./get-measure')
 const makeAddMeasure = require('./add-measure')
 const makeAddMeasureCategory = require('../measure-category/add-measure-category')
-const { validatePositiveInteger } = require('../../models/validators')
+const { validatePositiveInteger } = require('../../entities/validators')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
 const errorHandler = require('../../data-access/sqlite/error-handler/index')
-const getMockMeasure = require('../../models/measure/fixture')
+const getMockMeasure = require('../../entities/measure/fixture')
 const parseDbMeasure = require('../../data-access/sqlite/measure/parse-db-measure')
-const { NotFoundError, ValueError, ModelConstructionError, InvalidRationalValueError } = require('../../common/custom-error-types')
+const { NotFoundError, ValueError, EntityConstructionError, InvalidRationalValueError } = require('../../common/custom-error-types')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
@@ -22,8 +22,8 @@ describe('getMeasure', () => {
   const measuresValuesTypesDb = makeMeasuresValuesTypesDb({ dbConnector, errorHandler })
 
   const getMeasure = makeGetMeasure({ measuresDb, validatePositiveInteger, NotFoundError, ValueError })
-  const addMeasure = makeAddMeasure({ measuresDb, measuresCategoriesDb, measuresValuesTypesDb, ModelConstructionError, InvalidRationalValueError })
-  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb, ModelConstructionError })
+  const addMeasure = makeAddMeasure({ measuresDb, measuresCategoriesDb, measuresValuesTypesDb, EntityConstructionError, InvalidRationalValueError })
+  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb, EntityConstructionError })
 
   beforeEach(done => {
     closeDbConnections(() => resetDatabase({ dbPath }, err => done(err)))

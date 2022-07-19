@@ -2,9 +2,9 @@ const makeMeasuresCategoriesDb = require('../../data-access/sqlite/measure-categ
 const resetDatabase = require('../../../db/sqlite/index')
 const makeAddMeasureCategory = require('./add-measure-category')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
-const getMockMeasureCategory = require('../../models/measure-category/fixture')
+const getMockMeasureCategory = require('../../entities/measure-category/fixture')
 const errorHandler = require('../../data-access/sqlite/error-handler/index')
-const { ModelConstructionError, DbConflictError } = require('../../common/custom-error-types')
+const { EntityConstructionError, DbConflictError } = require('../../common/custom-error-types')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
@@ -13,18 +13,18 @@ const dbConnector = makeDbConnector({ dbPath })
 describe('makeAddMeasureCategory', () => {
   const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector, errorHandler })
 
-  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb, ModelConstructionError })
+  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb, EntityConstructionError })
 
   beforeEach(done => {
     closeDbConnections(() => resetDatabase({ dbPath }, err => done(err)))
   })
 
-  it('should fail create model if no param', done => {
+  it('should fail create entity if no param', done => {
     addMeasureCategory(undefined, (err, addedMeasureCategoryId) => {
       try {
         expect(addedMeasureCategoryId).toBeFalsy()
         expect(err).not.toBeFalsy()
-        expect(err).toBeInstanceOf(ModelConstructionError)
+        expect(err).toBeInstanceOf(EntityConstructionError)
         done()
       } catch (e) {
         done(e)
@@ -32,12 +32,12 @@ describe('makeAddMeasureCategory', () => {
     })
   })
 
-  it('should fail create model if empty object, no name', done => {
+  it('should fail create entity if empty object, no name', done => {
     addMeasureCategory({}, (err, addedMeasureCategoryId) => {
       try {
         expect(addedMeasureCategoryId).toBeFalsy()
         expect(err).not.toBeFalsy()
-        expect(err).toBeInstanceOf(ModelConstructionError)
+        expect(err).toBeInstanceOf(EntityConstructionError)
         done()
       } catch (e) {
         done(e)
@@ -45,12 +45,12 @@ describe('makeAddMeasureCategory', () => {
     })
   })
 
-  it('should fail create model if has name but not string', done => {
+  it('should fail create entity if has name but not string', done => {
     addMeasureCategory({ name: 1 }, (err, addedMeasureCategoryId) => {
       try {
         expect(addedMeasureCategoryId).toBeFalsy()
         expect(err).not.toBeFalsy()
-        expect(err).toBeInstanceOf(ModelConstructionError)
+        expect(err).toBeInstanceOf(EntityConstructionError)
         done()
       } catch (e) {
         done(e)
@@ -58,7 +58,7 @@ describe('makeAddMeasureCategory', () => {
     })
   })
 
-  it('should create model if object is valid', done => {
+  it('should create entity if object is valid', done => {
     addMeasureCategory(getMockMeasureCategory(), (err, addedMeasureCategoryId) => {
       try {
         expect(err).toBeFalsy()
@@ -71,7 +71,7 @@ describe('makeAddMeasureCategory', () => {
     })
   })
 
-  it('should fail if category name is already exists model, even if object is valid', done => {
+  it('should fail if category name is already exists entity, even if object is valid', done => {
     const mock = getMockMeasureCategory()
 
     addMeasureCategory(mock, postFirstInsert)

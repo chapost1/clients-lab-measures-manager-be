@@ -1,28 +1,28 @@
 const isObject = require('../common/is-object')
 
-module.exports = function unionModel ({ currentState, newState, idOverwrite = null } = {}) {
-  let model = {}
+module.exports = function unionEntity ({ currentState, newState, idOverwrite = null } = {}) {
+  let entity = {}
 
   if (isObject(currentState)) {
-    model = {
-      ...model,
+    entity = {
+      ...entity,
       ...currentState
     }
   }
 
   if (isObject(newState)) {
-    model = {
-      ...model,
+    entity = {
+      ...entity,
       ...newState
     }
   }
 
   if (idOverwrite) {
-    model = {
-      ...model,
+    entity = {
+      ...entity,
       ...{ id: idOverwrite }
     }
   }
 
-  return model
+  return entity
 }

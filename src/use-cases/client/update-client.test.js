@@ -4,13 +4,13 @@ const makeSexTypesDb = require('../../data-access/sqlite/sex-type/sex-types-db')
 const makeAddClient = require('./add-client')
 const makeGetClient = require('./get-client')
 const makeUpdateClient = require('./update-client')
-const { validatePositiveInteger } = require('../../models/validators')
+const { validatePositiveInteger } = require('../../entities/validators')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
 const errorHandler = require('../../data-access/sqlite/error-handler/index')
-const unionModel = require('../../models/union-model')
+const unionEntity = require('../../entities/union-entity')
 const parseDbClient = require('../../data-access/sqlite/client/parse-db-client')
-const getMockClient = require('../../models/client/fixture')
-const { ModelConstructionError, InvalidRationalValueError, NotFoundError, ValueError } = require('../../common/custom-error-types')
+const getMockClient = require('../../entities/client/fixture')
+const { EntityConstructionError, InvalidRationalValueError, NotFoundError, ValueError } = require('../../common/custom-error-types')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
@@ -20,9 +20,9 @@ describe('updateClient', () => {
   const clientsDb = makeClientsDb({ dbConnector, parseDbClient, errorHandler })
   const sexTypesDb = makeSexTypesDb({ dbConnector, errorHandler })
 
-  const addClient = makeAddClient({ clientsDb, sexTypesDb, ModelConstructionError, InvalidRationalValueError })
+  const addClient = makeAddClient({ clientsDb, sexTypesDb, EntityConstructionError, InvalidRationalValueError })
   const getClient = makeGetClient({ clientsDb, validatePositiveInteger, NotFoundError, ValueError })
-  const updateClient = makeUpdateClient({ clientsDb, sexTypesDb, unionModel, validatePositiveInteger, InvalidRationalValueError, ModelConstructionError, NotFoundError, ValueError })
+  const updateClient = makeUpdateClient({ clientsDb, sexTypesDb, unionEntity, validatePositiveInteger, InvalidRationalValueError, EntityConstructionError, NotFoundError, ValueError })
 
   beforeEach(done => {
     closeDbConnections(() => resetDatabase({ dbPath }, err => done(err)))
@@ -214,7 +214,7 @@ describe('updateClient', () => {
 
       function postUpdate (err) {
         try {
-          expect(err).toBeInstanceOf(ModelConstructionError)
+          expect(err).toBeInstanceOf(EntityConstructionError)
           done()
         } catch (e) {
           done(e)
@@ -240,7 +240,7 @@ describe('updateClient', () => {
 
       function postUpdate (err) {
         try {
-          expect(err).toBeInstanceOf(ModelConstructionError)
+          expect(err).toBeInstanceOf(EntityConstructionError)
           done()
         } catch (e) {
           done(e)
@@ -266,7 +266,7 @@ describe('updateClient', () => {
 
       function postUpdate (err) {
         try {
-          expect(err).toBeInstanceOf(ModelConstructionError)
+          expect(err).toBeInstanceOf(EntityConstructionError)
           done()
         } catch (e) {
           done(e)
@@ -292,7 +292,7 @@ describe('updateClient', () => {
 
       function postUpdate (err) {
         try {
-          expect(err).toBeInstanceOf(ModelConstructionError)
+          expect(err).toBeInstanceOf(EntityConstructionError)
           done()
         } catch (e) {
           done(e)
@@ -318,7 +318,7 @@ describe('updateClient', () => {
 
       function postUpdate (err) {
         try {
-          expect(err).toBeInstanceOf(ModelConstructionError)
+          expect(err).toBeInstanceOf(EntityConstructionError)
           done()
         } catch (e) {
           done(e)
@@ -344,7 +344,7 @@ describe('updateClient', () => {
 
       function postUpdate (err) {
         try {
-          expect(err).toBeInstanceOf(ModelConstructionError)
+          expect(err).toBeInstanceOf(EntityConstructionError)
           done()
         } catch (e) {
           done(e)

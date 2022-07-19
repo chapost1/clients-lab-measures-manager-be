@@ -1,13 +1,13 @@
-const makeClient = require('../../models/client/index')
-const { SEX_TYPE } = require('../../models/models-types')
+const makeClient = require('../../entities/client/index')
+const { SEX_TYPE } = require('../../entities/entities-types')
 
 module.exports = function makeAddClient ({
-  clientsDb, sexTypesDb, ModelConstructionError, InvalidRationalValueError
+  clientsDb, sexTypesDb, EntityConstructionError, InvalidRationalValueError
 }) {
   return function addMeasure (clientInfo, callback) {
     const { error, data: client } = makeClient(clientInfo)
     if (error) {
-      return callback(new ModelConstructionError(error.message))
+      return callback(new EntityConstructionError(error.message))
     }
 
     sexTypesDb.findById(client.sex.id, postFindSexTypeById)

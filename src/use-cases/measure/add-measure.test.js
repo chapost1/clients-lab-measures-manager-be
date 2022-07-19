@@ -7,7 +7,7 @@ const makeAddMeasureCategory = require('../measure-category/add-measure-category
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
 const errorHandler = require('../../data-access/sqlite/error-handler/index')
 const parseDbMeasure = require('../../data-access/sqlite/measure/parse-db-measure')
-const { ModelConstructionError, InvalidRationalValueError } = require('../../common/custom-error-types')
+const { EntityConstructionError, InvalidRationalValueError } = require('../../common/custom-error-types')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
@@ -18,19 +18,19 @@ describe('addMeasure', () => {
   const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector, errorHandler })
   const measuresValuesTypesDb = makeMeasuresValuesTypesDb({ dbConnector, errorHandler })
 
-  const addMeasure = makeAddMeasure({ measuresDb, measuresCategoriesDb, measuresValuesTypesDb, ModelConstructionError, InvalidRationalValueError })
-  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb, ModelConstructionError })
+  const addMeasure = makeAddMeasure({ measuresDb, measuresCategoriesDb, measuresValuesTypesDb, EntityConstructionError, InvalidRationalValueError })
+  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb, EntityConstructionError })
 
   beforeEach(done => {
     closeDbConnections(() => resetDatabase({ dbPath }, err => done(err)))
   })
 
-  it('should fail create model if no category id', done => {
+  it('should fail create entity if no category id', done => {
     addMeasure({ name: 'hello', valueType: { id: 1 } }, (err, addedMesureId) => {
       try {
         expect(addedMesureId).toBeFalsy()
         expect(err).not.toBeFalsy()
-        expect(err).toBeInstanceOf(ModelConstructionError)
+        expect(err).toBeInstanceOf(EntityConstructionError)
         done()
       } catch (e) {
         done(e)
@@ -38,12 +38,12 @@ describe('addMeasure', () => {
     })
   })
 
-  it('should fail create model if no value type id', done => {
+  it('should fail create entity if no value type id', done => {
     addMeasure({ name: 'hello', categoryId: 1 }, (err, addedMesureId) => {
       try {
         expect(addedMesureId).toBeFalsy()
         expect(err).not.toBeFalsy()
-        expect(err).toBeInstanceOf(ModelConstructionError)
+        expect(err).toBeInstanceOf(EntityConstructionError)
         done()
       } catch (e) {
         done(e)
@@ -51,12 +51,12 @@ describe('addMeasure', () => {
     })
   })
 
-  it('should fail create model if no name', done => {
+  it('should fail create entity if no name', done => {
     addMeasure({ valueType: { id: 1 }, category: { id: 1 } }, (err, addedMesureId) => {
       try {
         expect(addedMesureId).toBeFalsy()
         expect(err).not.toBeFalsy()
-        expect(err).toBeInstanceOf(ModelConstructionError)
+        expect(err).toBeInstanceOf(EntityConstructionError)
         done()
       } catch (e) {
         done(e)

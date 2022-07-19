@@ -1,13 +1,13 @@
 const makeMeasuresCategoriesDb = require('../measure-category/measures-categories-db')
-const { validatePositiveInteger } = require('../../../models/validators')
+const { validatePositiveInteger } = require('../../../entities/validators')
 const resetDatabase = require('../../../../db/sqlite/index')
 const makeMeasuresDb = require('./measures-db')
 const { makeDbConnector, closeDbConnections } = require('../index')
 const async = require('async')
 const parseDbMeasure = require('./parse-db-measure')
 const errorHandler = require('../error-handler/index')
-const getMockMeasure = require('../../../models/measure/fixture')
-const getMockMeasureCategory = require('../../../models/measure-category/fixture')
+const getMockMeasure = require('../../../entities/measure/fixture')
+const getMockMeasureCategory = require('../../../entities/measure-category/fixture')
 const { DbApplicationError } = require('../../../common/custom-error-types')
 
 const dbPath = process.env.SQLITE_DB_PATH

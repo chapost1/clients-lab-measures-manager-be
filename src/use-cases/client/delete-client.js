@@ -1,4 +1,4 @@
-const { CLIENT } = require('../../models/models-types')
+const { CLIENT } = require('../../entities/entities-types')
 
 module.exports = function makeDeleteClient ({ clientsDb, validatePositiveInteger, NotFoundError, ValueError }) {
   return function deleteClient (id, callback) {

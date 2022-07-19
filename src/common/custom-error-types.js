@@ -1,8 +1,8 @@
-class ModelConstructionError extends Error {
+class EntityConstructionError extends Error {
   constructor (message) {
     super(message)
     Error.captureStackTrace(this, this.constructor)
-    this.name = 'ModelConstructionError'
+    this.name = 'EntityConstructionError'
   }
 }
 
@@ -55,7 +55,7 @@ class DbConflictError extends Error {
 }
 
 module.exports = Object.freeze({
-  ModelConstructionError,
+  EntityConstructionError,
   ValueError,
   InvalidRationalValueError,
   NotFoundError,

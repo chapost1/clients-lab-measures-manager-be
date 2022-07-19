@@ -1,10 +1,10 @@
-const { ValueError, NotFoundError, ModelConstructionError, InvalidRationalValueError, DbConflictError, DbInvalidError } = require('../common/custom-error-types')
+const { ValueError, NotFoundError, EntityConstructionError, InvalidRationalValueError, DbConflictError, DbInvalidError } = require('../common/custom-error-types')
 
 const statusCodeByUserErrorTypes = {
   [ValueError.name]: 400, // Bad Request
   [NotFoundError.name]: 404, // Not Found
   [DbConflictError.name]: 409, // Conflict
-  [ModelConstructionError.name]: 422, // Uprocessable Entity
+  [EntityConstructionError.name]: 422, // Uprocessable Entity
   [InvalidRationalValueError.name]: 422, // Uprocessable Entity
   [DbInvalidError.name]: 422 // Uprocessable Entity
 }

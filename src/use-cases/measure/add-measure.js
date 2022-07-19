@@ -1,16 +1,16 @@
-const makeMeasure = require('../../models/measure/index')
+const makeMeasure = require('../../entities/measure/index')
 const {
   MEASURE_CATEGORY,
   MEASURE_VALUE_TYPE
-} = require('../../models/models-types')
+} = require('../../entities/entities-types')
 
 module.exports = function makeAddMeasure ({
-  measuresDb, measuresCategoriesDb, measuresValuesTypesDb, ModelConstructionError, InvalidRationalValueError
+  measuresDb, measuresCategoriesDb, measuresValuesTypesDb, EntityConstructionError, InvalidRationalValueError
 }) {
   return function addMeasure (measureInfo, callback) {
     const { error, data: measure } = makeMeasure(measureInfo)
     if (error) {
-      return callback(new ModelConstructionError(error.message))
+      return callback(new EntityConstructionError(error.message))
     }
 
     measuresValuesTypesDb.findById(measure.valueType.id, postFindValueTypeById)

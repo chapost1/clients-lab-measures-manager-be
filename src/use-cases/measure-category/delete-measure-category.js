@@ -1,4 +1,4 @@
-const { MEASURE_CATEGORY } = require('../../models/models-types')
+const { MEASURE_CATEGORY } = require('../../entities/entities-types')
 
 module.exports = function makeDeleteMeasureCategory ({ measuresCategoriesDb, validatePositiveInteger, NotFoundError, ValueError }) {
   return function deleteMeasureCategory (id, callback) {

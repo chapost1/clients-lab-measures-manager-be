@@ -1,5 +1,5 @@
 const {
-  ModelConstructionError,
+  EntityConstructionError,
   ValueError,
   InvalidRationalValueError,
   NotFoundError,
@@ -10,8 +10,8 @@ const {
 
 const validatators = [
   {
-    instance: ModelConstructionError,
-    expectedName: 'ModelConstructionError'
+    instance: EntityConstructionError,
+    expectedName: 'EntityConstructionError'
   },
   {
     instance: ValueError,

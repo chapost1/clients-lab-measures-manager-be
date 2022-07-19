@@ -5,11 +5,11 @@ const makeAddClient = require('./add-client')
 const makeDeleteClient = require('./delete-client')
 const makeListClients = require('./list-clients')
 const errorHandler = require('../../data-access/sqlite/error-handler/index')
-const { validatePositiveInteger } = require('../../models/validators')
+const { validatePositiveInteger } = require('../../entities/validators')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
 const parseDbClient = require('../../data-access/sqlite/client/parse-db-client')
-const getMockClient = require('../../models/client/fixture')
-const { NotFoundError, ValueError, ModelConstructionError, InvalidRationalValueError } = require('../../common/custom-error-types')
+const getMockClient = require('../../entities/client/fixture')
+const { NotFoundError, ValueError, EntityConstructionError, InvalidRationalValueError } = require('../../common/custom-error-types')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
@@ -20,7 +20,7 @@ describe('deleteClient', () => {
   const sexTypesDb = makeSexTypesDb({ dbConnector, errorHandler })
 
   const deleteClient = makeDeleteClient({ clientsDb, validatePositiveInteger, NotFoundError, ValueError })
-  const addClient = makeAddClient({ clientsDb, sexTypesDb, ModelConstructionError, InvalidRationalValueError })
+  const addClient = makeAddClient({ clientsDb, sexTypesDb, EntityConstructionError, InvalidRationalValueError })
   const listClients = makeListClients({ clientsDb })
 
   beforeEach(done => {

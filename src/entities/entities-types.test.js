@@ -4,9 +4,9 @@ const {
   SEX_TYPE,
   MEASURE_CATEGORY,
   MEASURE_VALUE_TYPE
-} = require('./models-types')
+} = require('./entities-types')
 
-describe('validate model types const values', () => {
+describe('validate entity types const values', () => {
   it('client', () => {
     expect(CLIENT).toBe('client')
   })

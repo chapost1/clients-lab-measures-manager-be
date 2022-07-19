@@ -1,13 +1,13 @@
 const resetDatabase = require('../../../db/sqlite/index')
 const makeMeasuresCategoriesDb = require('../../data-access/sqlite/measure-category/measures-categories-db')
 const makeDeleteMeasureCategory = require('./delete-measure-category')
-const { validatePositiveInteger } = require('../../models/validators')
+const { validatePositiveInteger } = require('../../entities/validators')
 const makeAddMeasureCategory = require('./add-measure-category')
 const makeListMeasuresCategories = require('./list-measures-categories')
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
-const getMockMeasureCategory = require('../../models/measure-category/fixture')
+const getMockMeasureCategory = require('../../entities/measure-category/fixture')
 const errorHandler = require('../../data-access/sqlite/error-handler/index')
-const { NotFoundError, ValueError, ModelConstructionError } = require('../../common/custom-error-types')
+const { NotFoundError, ValueError, EntityConstructionError } = require('../../common/custom-error-types')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
@@ -17,7 +17,7 @@ describe('deleteMeasureCategory', () => {
   const measuresCategoriesDb = makeMeasuresCategoriesDb({ dbConnector, errorHandler })
 
   const deleteMeasureCategory = makeDeleteMeasureCategory({ measuresCategoriesDb, validatePositiveInteger, NotFoundError, ValueError })
-  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb, ModelConstructionError })
+  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb, EntityConstructionError })
   const listMeasuresCategories = makeListMeasuresCategories({ measuresCategoriesDb })
 
   beforeEach(done => {

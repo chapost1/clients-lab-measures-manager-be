@@ -8,9 +8,9 @@ const makeAddMeasureCategory = require('../measure-category/add-measure-category
 const { makeDbConnector, closeDbConnections } = require('../../data-access/sqlite/index')
 const errorHandler = require('../../data-access/sqlite/error-handler/index')
 const async = require('async')
-const getMockMeasure = require('../../models/measure/fixture')
+const getMockMeasure = require('../../entities/measure/fixture')
 const parseDbMeasure = require('../../data-access/sqlite/measure/parse-db-measure')
-const { ModelConstructionError, InvalidRationalValueError } = require('../../common/custom-error-types')
+const { EntityConstructionError, InvalidRationalValueError } = require('../../common/custom-error-types')
 
 const dbPath = process.env.SQLITE_DB_PATH
 
@@ -22,8 +22,8 @@ describe('listMeasures', () => {
   const measuresValuesTypesDb = makeMeasuresValuesTypesDb({ dbConnector, errorHandler })
 
   const listMeasures = makeListMeasures({ measuresDb })
-  const addMeasure = makeAddMeasure({ measuresDb, measuresCategoriesDb, measuresValuesTypesDb, ModelConstructionError, InvalidRationalValueError })
-  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb, ModelConstructionError })
+  const addMeasure = makeAddMeasure({ measuresDb, measuresCategoriesDb, measuresValuesTypesDb, EntityConstructionError, InvalidRationalValueError })
+  const addMeasureCategory = makeAddMeasureCategory({ measuresCategoriesDb, EntityConstructionError })
 
   beforeEach(done => {
     closeDbConnections(() => resetDatabase({ dbPath }, err => done(err)))
