@@ -1,40 +1,52 @@
+const { missingRequiredFieldError } = require('../errors')
+
 module.exports = function buildMakeMeasure ({ validatePositiveInteger, validateStringInput }) {
   return function makeMeasure ({
     name,
-    categoryId,
-    valueTypeId,
+    category,
+    valueType,
     id = null
   } = {}) {
-    const { error: nameError, moderated: moderatedName } =
+    const { error: nameError, proper: properName } =
     validateStringInput({ string: name, fieldName: 'name', isRequired: true })
     if (nameError) {
       return { error: nameError, data: null }
     }
 
-    const { error: categoryIdError, moderated: moderatedCategoryId } =
-    validatePositiveInteger({ integer: categoryId, fieldName: 'categoryId', isRequired: true })
+    if (!category && typeof category !== 'object') {
+      return { error: missingRequiredFieldError('category'), data: null }
+    }
+    const { error: categoryIdError, proper: properCategoryId } =
+    validatePositiveInteger({ integer: category.id, fieldName: 'category.id', isRequired: true })
     if (categoryIdError) {
-      return { error: categoryIdError, data: moderatedCategoryId }
+      return { error: categoryIdError, data: properCategoryId }
     }
 
-    const { error: valueTypeIdError, moderated: moderatedValueTypeId } =
-    validatePositiveInteger({ integer: valueTypeId, fieldName: 'valueTypeId', isRequired: true })
+    if (!valueType && typeof valueType !== 'object') {
+      return { error: missingRequiredFieldError('valueType'), data: null }
+    }
+    const { error: valueTypeIdError, proper: properValueTypeId } =
+    validatePositiveInteger({ integer: valueType.id, fieldName: 'valueType.id', isRequired: true })
     if (valueTypeIdError) {
-      return { error: valueTypeIdError, data: moderatedValueTypeId }
+      return { error: valueTypeIdError, data: properValueTypeId }
     }
 
-    const { error: idError, moderated: moderatedId } = validatePositiveInteger({ integer: id, fieldName: 'id', isRequired: false })
+    const { error: idError, proper: properId } = validatePositiveInteger({ integer: id, fieldName: 'id', isRequired: false })
     if (idError) {
-      return { error: idError, data: moderatedId }
+      return { error: idError, data: properId }
     }
 
     return {
       error: null,
       data: Object.freeze({
-        name: moderatedName,
-        categoryId: moderatedCategoryId,
-        valueTypeId: moderatedValueTypeId,
-        id: moderatedId
+        id: properId,
+        name: properName,
+        category: {
+          id: properCategoryId
+        },
+        valueType: {
+          id: properValueTypeId
+        }
       })
     }
   }

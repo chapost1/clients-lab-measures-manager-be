@@ -1,8 +1,12 @@
 module.exports = function getMockMeasure () {
   return {
+    id: null,
     name: 'Gripper',
-    categoryId: 1,
-    valueTypeId: 1,
-    id: null
+    category: {
+      id: 1
+    },
+    valueType: {
+      id: 1
+    }
   }
 }

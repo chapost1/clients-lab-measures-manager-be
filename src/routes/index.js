@@ -8,6 +8,6 @@ routes.use('/measures', measuresRoutes)
 
 routes.use('/measures-categories', measuresCategoriesRoutes)
 
-routes.use('clients', clientsRoutes)
+routes.use('/clients', clientsRoutes)
 
 module.exports = routes

@@ -17,12 +17,22 @@ describe('parseDbMeasure', () => {
 
   it('should return same category name (different field)', () => {
     const categoryName = 'category_name'
-    expect(parseDbMeasure({ category_name: categoryName }).categoryName).toBe(categoryName)
+    expect(parseDbMeasure({ category_name: categoryName }).category.name).toBe(categoryName)
+  })
+
+  it('should return same category id (different field)', () => {
+    const categoryId = 1
+    expect(parseDbMeasure({ category_id: categoryId }).category.id).toBe(categoryId)
   })
 
   it('should return same value type name (different field)', () => {
     const valueTypeName = 'value_type_name'
-    expect(parseDbMeasure({ value_type_name: valueTypeName }).valueTypeName).toBe(valueTypeName)
+    expect(parseDbMeasure({ value_type_name: valueTypeName }).valueType.name).toBe(valueTypeName)
+  })
+
+  it('should return same value type id (different field)', () => {
+    const valueTypeId = 1
+    expect(parseDbMeasure({ value_type_id: valueTypeId }).valueType.id).toBe(valueTypeId)
   })
 
   describe('should not return any new field which has not been initially passed', () => {
@@ -36,16 +46,29 @@ describe('parseDbMeasure', () => {
       expect(parsed.id).toBeUndefined()
     })
 
-    it('should not suddenly add category name', () => {
+    it('should not suddenly add category', () => {
       const parsed = parseDbMeasure({ id: 2, value_type_name: 'other', name: '1' })
-      expect(parsed.categoryName).toBeUndefined()
+      expect(parsed.category).toBeUndefined()
       expect(parsed.category_name).toBeUndefined()
     })
 
-    it('should not suddenly add value type name', () => {
+    it('should not suddenly add category id', () => {
       const parsed = parseDbMeasure({ id: 2, category_name: 'other', name: '1' })
-      expect(parsed.valueTypeName).toBeUndefined()
+      expect(parsed.category.id).toBeUndefined()
+      expect(parsed.category_id).toBeUndefined()
+    })
+
+    it('should not suddenly add value type', () => {
+      const parsed = parseDbMeasure({ id: 2, category_name: 'other', name: '1' })
+      expect(parsed.valueType).toBeUndefined()
       expect(parsed.value_type_name).toBeUndefined()
+    })
+
+    it('should not suddenly add value type', () => {
+      const parsed = parseDbMeasure({ id: 2, category_id: 'other', name: '1' })
+      expect(parsed.valueType).toBeUndefined()
+      expect(parsed.value_type_id).toBeUndefined()
+      expect(parsed.category_id).toBeUndefined()
     })
   })
 })

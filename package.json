@@ -4,8 +4,8 @@
   "description": "Backend for clients lab measures management",
   "main": "index.js",
   "scripts": {
-    "start": "PORT=8080 SQLITE_DB_PATH_DIR=./db/sqlite/state SQLITE_DB_PATH=./db/sqlite/state/dev-db.db node ./src/index.js",
-    "test": "npx standard && SQLITE_DB_PATH_DIR=./db/sqlite/state SQLITE_DB_PATH=./db/sqlite/state/test-db.db npx jest --runInBand"
+    "start": "PORT=8080 APP_LOCALE=he-IL SQLITE_DB_PATH_DIR=./db/sqlite/state SQLITE_DB_PATH=./db/sqlite/state/dev-db.db node ./src/index.js",
+    "test": "npx standard && APP_LOCALE=he-IL SQLITE_DB_PATH_DIR=./db/sqlite/state SQLITE_DB_PATH=./db/sqlite/state/test-db.db npx jest --runInBand"
   },
   "author": "Shahar Tal",
   "license": "(MIT OR Apache-2.0)",
@@ -14,7 +14,8 @@
     "better-sqlite3": "7.5.3",
     "body-parser": "1.20.0",
     "express": "4.18.1",
-    "sanitize-html": "2.7.0"
+    "sanitize-html": "2.7.0",
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "jest": "28.1.1",

@@ -80,7 +80,7 @@ describe('getMeasure', () => {
         return done(err)
       }
 
-      mockMeasure.categoryId = addedMeasureCategoryId
+      mockMeasure.category.id = addedMeasureCategoryId
 
       addMeasure(mockMeasure, postMeasureInsert)
     }
@@ -98,7 +98,8 @@ describe('getMeasure', () => {
         expect(err).toBeFalsy()
         expect(measure.id).toBe(insertedMeasureId)
         expect(measure.name).toBe(mockMeasure.name)
-        expect(measure.categoryName).toBe(categoryName)
+        expect(measure.category.name).toBe(categoryName)
+        expect(measure.category.id).toBe(mockMeasure.category.id)
         done()
       } catch (e) {
         done(e)

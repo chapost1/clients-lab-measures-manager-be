@@ -2,12 +2,12 @@ const { createdResponse, errorHandler } = require('../response-utils')
 
 module.exports = function makeAddMeasure ({ addMeasure }) {
   return function postMeasure (httpRequest, callback) {
-    const { name, categoryId, valueTypeId } = httpRequest.body
+    const { name, category, valueType } = httpRequest.body
 
     const measure = {
       name,
-      categoryId,
-      valueTypeId
+      category,
+      valueType
     }
 
     addMeasure(measure, postAddMeasure)

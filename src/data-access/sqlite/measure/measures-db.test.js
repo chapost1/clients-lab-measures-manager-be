@@ -74,7 +74,7 @@ describe('measuresDb', () => {
         return done(error)
       }
 
-      mockMeasure.categoryId = addedMeasureCategoryId
+      mockMeasure.category.id = addedMeasureCategoryId
 
       measuresDb.insert(mockMeasure, postInsert)
     }
@@ -96,7 +96,7 @@ describe('measuresDb', () => {
         expect(foundMeasure).not.toBeNull()
         expect(foundMeasure.id).toBe(insertedId)
         expect(foundMeasure.name).toBe(mockMeasure.name)
-        expect(foundMeasure.categoryName).toBe(measureCategoryName)
+        expect(foundMeasure.category.name).toBe(measureCategoryName)
         done()
       } catch (error) {
         done(error)
@@ -135,7 +135,7 @@ describe('measuresDb', () => {
         return done(error)
       }
 
-      mockMeasure.categoryId = addedMeasureCategoryId
+      mockMeasure.category.id = addedMeasureCategoryId
 
       insertMultiMeasures()
     }
@@ -182,7 +182,7 @@ describe('measuresDb', () => {
         return done(error)
       }
 
-      mockMeasure.categoryId = addedMeasureCategoryId
+      mockMeasure.category.id = addedMeasureCategoryId
 
       async.series([
         callback => measuresDb.insert(mockMeasure, callback),
@@ -216,7 +216,7 @@ describe('measuresDb', () => {
         return done(error)
       }
 
-      mockMeasure.categoryId = addedMeasureCategoryId
+      mockMeasure.category.id = addedMeasureCategoryId
 
       insertFirstMeasure()
     }
